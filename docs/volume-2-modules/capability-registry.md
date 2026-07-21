@@ -1,7 +1,8 @@
 # Module Spec — Capability Registry
 
-**Status:** Spec (Stage 2). Not yet implemented. Manifest schema is already
-canonical in `nexus/schemas/capability.py` and Volume 3.
+**Status:** Implemented (Stage 2). Code: `nexus/capabilities/`. Tests:
+`tests/test_registry.py`. Manifest schema: `nexus/schemas/capability.py` and
+Volume 3 (`capability-manifest.md`).
 
 ## Purpose
 
@@ -14,29 +15,63 @@ themselves; the kernel knows only the manifest schema, never implementations.
 trust/reliability bookkeeping.
 
 **Must never:** execute capabilities, route (Router's job), or special-case any
-vendor. A capability for Claude and a capability for a local script are the
+vendor. A capability for a hosted model and one for a local script are the
 same kind of object.
 
 ## Behavior
 
-- **Register:** validate manifest (schema, version, permissions) → store →
-  emit `capability.registered`.
-- **Discover:** query by capability *type* (`browser`, `code`, `research`),
-  returning manifests with current health and trust.
-- **Health:** periodic or on-demand checks; unhealthy capabilities remain
-  registered but are flagged; the router decides whether to use them.
-- **Versioning:** multiple versions may coexist; retirement emits
-  `capability.retired`.
-- Trust and reliability scores are *written by the learning pipeline* from
-  verified run history, never self-reported past registration defaults
-  (Invariant I2).
+### Registration
+- `register(manifest, health_probe?) → "name@version"`. Validates the manifest
+  (schema errors, malformed permissions) and registry policy: an optional
+  **permission allowlist** rejects overpermissioned manifests, and an optional
+  **type vocabulary** rejects unknown capability types (both open when
+  unconfigured). Rejections carry every reason. Emits `capability.registered`.
+- Identity is `(name, version)`; duplicates are rejected; **versions coexist**.
+- The registry stores a *deep copy* and returns *deep copies* from every query:
+  no caller can mutate registered state — in particular scores — by aliasing.
 
-## Interfaces
+### Discovery
+- `find(type, healthy_only?, include_retired?)` returns records sorted
+  deterministically (name, then numeric version). `get(name)` returns the
+  latest ACTIVE version by numeric semver comparison (1.10.0 > 1.2.0);
+  `get(name, version)` returns that exact version in any status.
+- `types()` lists the active capability-type vocabulary.
 
-- `CapabilityManifest` schema: Volume 3 (`capability-manifest.md`).
-- Registry API: register / deregister / find(type, constraints) / health(id).
+### Health
+- Statuses: `UNKNOWN` (never checked / no probe) → `HEALTHY`/`UNHEALTHY` via
+  the registered probe. A probe exception means UNHEALTHY, never a crash.
+- Unhealthy capabilities **remain registered and findable, only flagged** —
+  the router decides whether to use them. `healthy_only=True` filters.
+- `capability.health` is emitted once per transition, not per check.
+
+### Retirement
+- `retire(name, version)` flags the record RETIRED (idempotent; unknown ids
+  error), excludes it from default discovery and from latest-version
+  resolution, keeps the record queryable, and emits `capability.retired`.
+
+### Evidence-gated scores (Invariant I2)
+- `record_outcome(name, version, evidence, success)` is the **only** path that
+  moves `reliability` and `trust_score` after registration, and it rejects
+  unverified `Evidence`. There is no public setter.
+- Update rule (deterministic EMA, clamped to [0,1]):
+  `reliability += 0.2 · (target − reliability)` with target 1 on success, 0 on
+  failure; `trust += 0.1 · (target − trust)` with target = evidence confidence
+  on success, 0 on failure — trust moves slower and is confidence-weighted.
+  Emits `capability.scored` with the new values and evidence id.
+- The credential model (restricting *callers* of `record_outcome` to Cog) is
+  enforced organizationally until the security layer lands; the evidence gate
+  is enforced in code now.
+
+## Events
+
+`capability.registered`, `capability.retired`, `capability.health`,
+`capability.scored` — all within the reserved `capability.*` namespace.
 
 ## Verification
 
-Manifest validation tests (reject malformed/overpermissioned), discovery
-filtering tests, health-flag behavior, version coexistence.
+26 tests: manifest/policy rejection with reasons, duplicate rejection, version
+coexistence and numeric-latest resolution, copy-isolation both directions,
+deterministic discovery order, retirement semantics, probe success/failure/
+exception, flagged-not-hidden unhealthy behavior, transition-only health
+events, and the score gate (verified success raises / failure lowers /
+unverified rejected unchanged / clamped / deterministic).

@@ -47,6 +47,7 @@ docs/        The six specification volumes (see table above)
 nexus/       The runtime implementation
   kernel/    Stage 0: event bus, state, sessions, scheduler, runtime lifecycle
   intent/    Stage 1: deterministic objective → structured intent parsing
+  capabilities/  Stage 2: capability registry — manifests, discovery, health, scores
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -62,6 +63,12 @@ never as kernel code.
 objectives into structured intent (goals, constraints, desired outcomes, open
 questions, context refs) with content-derived ids. Ambiguity becomes explicit
 open questions, never silent guesses.
+
+**Stage 2 — Capability Registry** is implemented: registration with policy
+validation (permission allowlist, type vocabulary), versioned coexistence,
+health probes (unhealthy is flagged, never hidden), retirement, and
+evidence-gated reliability/trust scoring — the only path that moves scores
+after registration requires verified Evidence (Invariant I2).
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

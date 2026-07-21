@@ -11,7 +11,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [kernel.md](kernel.md) | Runtime kernel: events, state, sessions, scheduler, runtime | **Implemented (Stage 0)** |
 | [intent.md](intent.md) | Intent engine | **Implemented (Stage 1)** |
 | [planner.md](planner.md) | Planner | Spec (Stage 1) |
-| [capability-registry.md](capability-registry.md) | Capability registry | Spec (Stage 2) |
+| [capability-registry.md](capability-registry.md) | Capability registry | **Implemented (Stage 2)** |
 | [router.md](router.md) | Capability router | Spec (Stage 3) |
 | [executor.md](executor.md) | Runtime executor | Spec (Stage 4) |
 | [memory.md](memory.md) | Memory system | Spec (Stage 5) |

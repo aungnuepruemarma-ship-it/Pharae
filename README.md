@@ -50,6 +50,7 @@ nexus/       The runtime implementation
   capabilities/  Stage 2: capability registry — manifests, discovery, health, scores
   router/    Stage 3: deterministic policy routing with recorded decisions
   planner/   Stage 4: intent → task DAG with structural verification, re-planning
+  executor/  Stage 5: parallel execution, jobs, retries, checkpoint/resume
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -85,6 +86,14 @@ verification is structural. Re-planning produces an immutable successor plan
 with provenance to the failed plan and its evidence. The coordination chain
 now runs end to end: objective → intent → plan → routed bindings → completed
 run.
+
+**Stage 5 — Executor** is implemented: parallel execution of independent DAG
+branches on a bounded worker pool, background jobs whose handle is the
+interactive surface (pause/unpause at task boundaries, cooperative cancel),
+bounded recorded retries, and checkpoint/resume — completed outputs and
+working memory are snapshotted at every task boundary, and resume replays
+them without re-execution. Plans stay immutable; the Run record is the
+account of what happened.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

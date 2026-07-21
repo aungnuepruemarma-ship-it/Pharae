@@ -87,6 +87,9 @@ class Runtime:
     def handler_types(self) -> list[str]:
         return sorted(self._handlers)
 
+    def get_handler(self, capability_type: str) -> Handler | None:
+        return self._handlers.get(capability_type)
+
     # -- execution -----------------------------------------------------------
 
     def execute(self, plan: Plan, session: Session | None = None) -> Run:

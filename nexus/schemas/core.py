@@ -96,6 +96,7 @@ class TaskResult:
     status: TaskStatus
     output: Any = None
     error: str | None = None
+    attempts: int = 1
 
 
 @dataclass

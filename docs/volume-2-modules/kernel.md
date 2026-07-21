@@ -26,6 +26,9 @@ prompts. (Invariant I1.) The kernel imports only the Python standard library and
   wildcard (`task.*`, `*`).
 - Synchronous, deterministic delivery in subscription order (V1). An async bus
   is a permitted future change behind the same interface.
+- Thread-safe since Stage 5 (reentrant lock; each publish is one critical
+  section, preserving per-publish delivery order under concurrent
+  publishers).
 - Every published event is appended to an in-memory **event log** with a
   monotonic sequence number and timestamp — the primitive for replay and
   observability (Invariant I6).
@@ -38,6 +41,8 @@ prompts. (Invariant I1.) The kernel imports only the Python standard library and
 - **Snapshot/restore** of a namespace or the whole store — the checkpointing
   primitive used for recovery and resume.
 - Snapshots are deep copies; mutating live state never corrupts a checkpoint.
+- Thread-safe since Stage 5 (executor workers write working memory while the
+  dispatch loop snapshots checkpoints).
 
 ### Session Manager (`nexus/kernel/sessions.py`)
 

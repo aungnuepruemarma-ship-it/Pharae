@@ -42,7 +42,7 @@ with `provenance` linking to the failed plan and its evidence.
 Run {
   id, plan_id, session_id,
   status: RUNNING | COMPLETED | FAILED | PARTIAL | CANCELLED,
-  task_results: { task_id: { status, output?, error? } },
+  task_results: { task_id: { status, output?, error?, attempts } },
   started_at, finished_at?
 }
 ```
@@ -52,5 +52,7 @@ completed and some were blocked/failed.
 
 ## Events
 
-`task.started`, `task.completed`, `task.failed` (payload: `task_id`, `run_id`);
-`run.completed`, `run.failed` (payload: `run_id`, `status`).
+`task.started`, `task.completed`, `task.failed`, `task.retried` (payload:
+`task_id`, `run_id`, plus `attempt` on retry); `run.started`, `run.completed`,
+`run.failed`, `run.cancelled`, `run.checkpointed`, `run.resumed` (payload:
+`run_id` plus mode-specific fields).

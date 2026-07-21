@@ -56,6 +56,7 @@ nexus/       The runtime implementation
   research/  Stage 8: research capability — docs, repos, web refs (manifest+handler+check)
   browser/   Stage 9: browser capability — Playwright behind a driver seam, action scripts
   plugins/   Stage 10: installable plugins — atomic install, permission review, lifecycle
+  cog/       Learning engine: reflection, versioned policies, skills, routing revision
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -145,6 +146,16 @@ lifecycle covers disable/enable (registry reactivation), side-by-side
 versioned update, and removal that never deletes registry history. Handlers
 register under capability ids, so same-type plugins coexist and the router's
 binding decides which one runs — dispatch honors routing exactly.
+
+**Cog — the fifth pillar** — is implemented: verified `(Run, Evidence)` pairs
+drive reflection into episodic and failure memory, capability score updates,
+versioned policies (propose → activate → rollback, journaled durably), and
+skill promotion by plan signature with deprecation on later failure. Repeated
+verified failures of a capability produce a routing-policy revision denying
+it — the product loop's last arrow, tested end to end: a trusted-but-broken
+capability fails three runs, Cog learns, and the next routing picks the
+working alternative. All five pillars of the architecture are now
+implemented.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

@@ -1,6 +1,7 @@
 # Module Spec — Cog Learning System
 
-**Status:** Spec (post-V1 core loop; minimal version lands with Stage 6–7).
+**Status:** Implemented. Code: `nexus/cog/`. Tests: `tests/test_cog.py`.
+The fifth pillar — with it, all five pillars of Volume 1 §2 are implemented.
 
 ## Purpose
 
@@ -13,38 +14,57 @@ Run → Evidence → Evaluation → Failure analysis → Policy update → Skill
 
 ## Boundary
 
-**Owns:** reflection, policy lifecycle, skill extraction, the memory promotion
-pipeline.
+**Owns:** reflection, the policy lifecycle, skill extraction, the memory
+promotion pipeline — Cog is the intended holder of the promotion credential:
+in the normal flow it is the only caller of `memory.promote` and
+`registry.record_outcome`.
 
-**Must never:** learn from unverified output (Invariant I2), write memory
-outside the gated pipeline (Invariant I3), or modify kernel/runtime code.
+**Must never:** learn from unverified output (Invariant I2 — `learn()`
+raises on unverified evidence, and both downstream gates enforce it again
+independently), write memory outside the gated pipeline (I3), or modify
+kernel/runtime code.
 
 ## Components
 
-### Reflection Engine
-Success analysis, failure analysis, pattern extraction across runs. Input is
-strictly `(Run, Evidence)` pairs with `verified` status.
+### Reflection (`learn(run, evidence, plan)`)
+Every verified learn promotes an **episodic** record (run, signature,
+success, confidence, failed tasks) and one **failure** record per failed
+task (error, capability binding, signature) — evidence of failure is as
+valuable as evidence of success. Capability score updates flow to the
+registry per bound task outcome; unknown bindings are noted, never fatal.
 
 ### Policy Engine
-Policies (routing rules, retry budgets, memory promotion criteria) are
-versioned objects with confidence tracking. Lifecycle: **propose → trial →
-promote → deprecate → rollback**. A policy that regresses benchmarks is rolled
-back automatically; every transition is recorded.
+Versioned, immutable policy records per kind: **propose → activate →
+deprecate → rollback**, every transition evented (`policy.*`) and journaled
+durably through the memory sink (`policy_events` — an operational record
+like routing decisions). Rollback restores the previously active version and
+records why. *V1 shortcut, recorded:* activation is immediate; benchmark-
+gated trials arrive with the benchmark harness — rollback exists now, so a
+bad policy is one call from gone.
 
 ### Skill Evolution
-Repeated verified successes of the same task shape are extracted into
-**skills**: reusable procedures (capability compositions) registered in
-procedural memory with provenance to their source runs. Skills carry their own
-confidence and are deprecated when they start failing.
+`skill_threshold` (default 3) verified successes of the same **plan
+signature** (the capability-type chain, e.g. `research→code→verify`) promote
+a skill into **procedural** memory: task chain, source-run provenance, mean
+source confidence. One skill per signature; a later verified failure of the
+signature deprecates it (`skill.promoted` / `skill.deprecated`). Thresholds
+are counted from durable memory layers, not in-process state — learning
+survives restarts.
 
-## Interfaces
-
-- Input: verified `(Run, Evidence)` pairs; recorded `RoutingDecision`s.
-- Output: policy versions, skill entries (via Memory API `promote`), routing
-  weight updates.
+### Routing Improvement
+`failure_threshold` (default 3) verified failures of a capability propose
+and activate a routing-policy revision adding it to `denied`.
+`to_routing_policy(active_version)` materializes the record as the
+`RoutingPolicy` the router consumes — closing the product loop's last arrow:
+the capstone test shows a trusted-but-broken capability failing three
+verified runs, Cog denying it, and the next routing choosing the working
+alternative that succeeds.
 
 ## Verification
 
-Regression harness: a policy update must not reduce benchmark success rate;
-rollback restores prior behavior exactly; every promoted skill traces to ≥N
-verified runs.
+13 tests: the evidence gate (unverified → CogError, nothing written),
+episodic/failure promotion with provenance, registry score movement in both
+directions, unknown-binding resilience, skill threshold/uniqueness/
+signature-isolation/deprecation, policy propose-activate-supersede,
+rollback with journal durability, threshold-triggered denial consumed by a
+real router, and the full improvement loop end to end.

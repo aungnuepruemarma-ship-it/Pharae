@@ -50,13 +50,17 @@ false positives are acceptable; leaked credentials are not.
 match; both exclude deprecated items by default. Layers accept enum or
 string. Contents round-trip through JSON.
 
-## Routing-Decision Record
+## Operational Records (distinct from the memory layers)
 
-Routing decisions persist here as an **operational record distinct from the
-memory layers** — they are the router's replay log (Invariant I6), not
-knowledge, so no gate applies. The router's `decision_sink` hook wires to
-`record_routing_decision`; `routing_decisions()` reconstructs full
-`RoutingDecision` objects across restarts.
+Two append-only replay logs persist here without gating — they are records
+of what the runtime did (Invariant I6), not knowledge:
+
+- **Routing decisions** — the router's `decision_sink` wires to
+  `record_routing_decision`; `routing_decisions()` reconstructs full
+  `RoutingDecision` objects across restarts.
+- **Policy journal** — Cog's policy engine sinks every policy-version
+  transition to `record_policy_event`; `policy_events(kind?)` returns the
+  auditable history.
 
 ## Storage
 

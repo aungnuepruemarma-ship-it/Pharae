@@ -124,6 +124,17 @@ class MemorySystem:
                )"""
         )
         self._db.execute(
+            """CREATE TABLE IF NOT EXISTS policy_events (
+                 seq INTEGER PRIMARY KEY AUTOINCREMENT,
+                 kind TEXT NOT NULL,
+                 version INTEGER NOT NULL,
+                 status TEXT NOT NULL,
+                 payload TEXT NOT NULL,
+                 reason TEXT NOT NULL,
+                 created_at REAL NOT NULL
+               )"""
+        )
+        self._db.execute(
             """CREATE TABLE IF NOT EXISTS routing_decisions (
                  seq INTEGER PRIMARY KEY AUTOINCREMENT,
                  id TEXT NOT NULL,
@@ -327,6 +338,45 @@ class MemorySystem:
             created_at=promoted_at,
             deprecated=bool(deprecated),
         )
+
+    # -- policy journal (operational log, not a memory layer) ----------------
+
+    def record_policy_event(self, event: dict[str, Any]) -> None:
+        """Append-only journal of policy-version transitions (Cog's policy
+        engine wires its sink here). Operational record like routing
+        decisions — replay log, not knowledge, so no promotion gate applies."""
+        with self._lock:
+            self._db.execute(
+                """INSERT INTO policy_events
+                   (kind, version, status, payload, reason, created_at)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (
+                    event["kind"], event["version"], event["status"],
+                    json.dumps(event.get("payload", {})), event.get("reason", ""),
+                    event.get("created_at", time.time()),
+                ),
+            )
+            self._db.commit()
+
+    def policy_events(self, kind: str | None = None) -> list[dict[str, Any]]:
+        query = "SELECT kind, version, status, payload, reason, created_at FROM policy_events"
+        params: list[Any] = []
+        if kind is not None:
+            query += " WHERE kind = ?"
+            params.append(kind)
+        with self._lock:
+            rows = self._db.execute(query + " ORDER BY seq", params).fetchall()
+        return [
+            {
+                "kind": row[0],
+                "version": row[1],
+                "status": row[2],
+                "payload": json.loads(row[3]),
+                "reason": row[4],
+                "created_at": row[5],
+            }
+            for row in rows
+        ]
 
     # -- routing-decision record (operational log, not a memory layer) -------
 

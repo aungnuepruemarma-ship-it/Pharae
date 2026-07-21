@@ -305,6 +305,13 @@ driver seam, optional dependency), plugin system ✅ (Stage 10 — installable
 packages contributing capabilities; atomic install, permission review,
 dispatch by binding), knowledge graph (if justified).
 
+**Cog (the fifth pillar) ✅** — implemented beyond the staged roadmap:
+reflection into episodic/failure memory, versioned policies with rollback
+and a durable journal, skill promotion/deprecation by plan signature, and
+routing revisions that close the product loop's last arrow (verified
+failures teach the router away from broken capabilities). All five pillars
+of §2 are now implemented.
+
 **Phase 3 — Distributed Intelligence:** swarms, cloud scheduler, capability
 exchange, continuous learning.
 

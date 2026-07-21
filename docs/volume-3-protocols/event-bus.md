@@ -34,6 +34,7 @@ and never the envelope shape.
 | `intent.*` | Intent engine |
 | `thinking.*` | Thinking layer (L4) |
 | `plan.*` | Planner |
+| `economics.*` | Economics layer (L5) |
 | `route.*` | Router |
 | `run.*` | Executor / verification |
 | `capability.*` | Registry |

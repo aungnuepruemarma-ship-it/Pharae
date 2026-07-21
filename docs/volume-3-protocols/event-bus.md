@@ -31,6 +31,7 @@ and never the envelope shape.
 | `runtime.*` | Kernel runtime lifecycle |
 | `session.*` | Session manager |
 | `task.*` | Scheduler / executor |
+| `intent.*` | Intent engine |
 | `plan.*` | Planner |
 | `route.*` | Router |
 | `run.*` | Executor / verification |

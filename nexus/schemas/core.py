@@ -55,6 +55,7 @@ class Intent:
     constraints: list[str] = field(default_factory=list)
     desired_outcomes: list[str] = field(default_factory=list)
     open_questions: list[str] = field(default_factory=list)
+    context_refs: list[str] = field(default_factory=list)
 
 
 @dataclass

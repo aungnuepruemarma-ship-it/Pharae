@@ -46,7 +46,8 @@ the way large systems (Linux, Kubernetes, LLVM) do.
 docs/        The six specification volumes (see table above)
 nexus/       The runtime implementation
   kernel/    Stage 0: event bus, state, sessions, scheduler, runtime lifecycle
-  schemas/   Canonical data objects: Objective, Task, Plan, Capability, Evidence, Run
+  intent/    Stage 1: deterministic objective → structured intent parsing
+  schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
 
@@ -56,6 +57,11 @@ tests/       Unit tests (stdlib unittest; no dependencies)
 session manager, event bus, and state manager, with the canonical data schemas.
 No browser. No agents. No cloud. Those arrive later as *capabilities and plugins*,
 never as kernel code.
+
+**Stage 1 — Intent Engine** is implemented: deterministic, rule-based parsing of
+objectives into structured intent (goals, constraints, desired outcomes, open
+questions, context refs) with content-derived ids. Ambiguity becomes explicit
+open questions, never silent guesses.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

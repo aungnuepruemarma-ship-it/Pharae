@@ -60,7 +60,11 @@ class Intent:
 
 @dataclass
 class Task:
-    """A unit of work; a node in a plan."""
+    """A unit of work; a node in a plan.
+
+    ``capability_type`` is authored by the planner and is always a type
+    string, never a vendor. ``capability_binding`` ("name@version") is the
+    router's output, attached at routing time — never authored in a plan."""
 
     id: str
     capability_type: str
@@ -68,6 +72,7 @@ class Task:
     depends_on: list[str] = field(default_factory=list)
     priority: int = 0
     status: TaskStatus = TaskStatus.PENDING
+    capability_binding: str | None = None
 
 
 @dataclass

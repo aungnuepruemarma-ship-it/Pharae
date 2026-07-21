@@ -12,7 +12,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [intent.md](intent.md) | Intent engine | **Implemented (Stage 1)** |
 | [planner.md](planner.md) | Planner | Spec (Stage 1) |
 | [capability-registry.md](capability-registry.md) | Capability registry | **Implemented (Stage 2)** |
-| [router.md](router.md) | Capability router | Spec (Stage 3) |
+| [router.md](router.md) | Capability router | **Implemented (Stage 3)** |
 | [executor.md](executor.md) | Runtime executor | Spec (Stage 4) |
 | [memory.md](memory.md) | Memory system | Spec (Stage 5) |
 | [verification.md](verification.md) | Verification engine | Spec (Stage 6) |

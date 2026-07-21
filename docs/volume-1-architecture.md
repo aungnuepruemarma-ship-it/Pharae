@@ -292,8 +292,8 @@ do · think · research · plan · run · verify · memory · learn · browse ·
 ## 17. Roadmap
 
 **Phase 1 — Kernel MVP:** runtime kernel ✅ (Stage 0), intent engine ✅
-(Stage 1), capability registry ✅ (Stage 2), planner, router, executor,
-SQLite memory, verification.
+(Stage 1), capability registry ✅ (Stage 2), router ✅ (Stage 3), planner,
+executor, SQLite memory, verification.
 
 **Phase 2 — Knowledge:** research engine, browser capability (one backend,
 Playwright), knowledge graph (if justified), plugin SDK.
@@ -308,7 +308,7 @@ Staged build order within Phase 1 (each stage follows the Volume 5 workflow):
 | 0 | Kernel: runtime, scheduler, sessions, event bus, state ✅ |
 | 1 | Intent engine: objective → constraints → plan-ready intent ✅ |
 | 2 | Capability registry + manifest loader + health ✅ |
-| 3 | Router (rule-based, recorded decisions) |
+| 3 | Router (rule-based, recorded decisions) ✅ |
 | 4 | Executor: interactive, background, parallel, checkpoint, resume |
 | 5 | Memory (SQLite): working, project, history, skills |
 | 6 | Verification: evidence, logs, artifacts, confidence |

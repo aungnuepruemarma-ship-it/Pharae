@@ -13,6 +13,8 @@ Task {
   depends_on: [str]          # task ids within the same plan
   priority: int              # higher runs earlier among ready tasks (default 0)
   status: PENDING | READY | RUNNING | COMPLETED | FAILED | BLOCKED | CANCELLED
+  capability_binding: str?   # "name@version" — router output, attached at
+                             # routing time, never authored in a plan
 }
 ```
 

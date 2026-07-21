@@ -48,6 +48,7 @@ nexus/       The runtime implementation
   kernel/    Stage 0: event bus, state, sessions, scheduler, runtime lifecycle
   intent/    Stage 1: deterministic objective → structured intent parsing
   capabilities/  Stage 2: capability registry — manifests, discovery, health, scores
+  router/    Stage 3: deterministic policy routing with recorded decisions
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -69,6 +70,12 @@ validation (permission allowlist, type vocabulary), versioned coexistence,
 health probes (unhealthy is flagged, never hidden), retirement, and
 evidence-gated reliability/trust scoring — the only path that moves scores
 after registration requires verified Evidence (Invariant I2).
+
+**Stage 3 — Router** is implemented: deterministic rule-based selection over
+manifest fields (quality rewarded, normalized cost/latency penalized, explicit
+per-candidate exclusion reasons, preference bonus, name/version tie-breaks).
+Every decision — routable or not — is recorded complete enough to replay;
+unroutable tasks fail explicitly, the router never guesses.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

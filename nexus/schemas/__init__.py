@@ -17,14 +17,17 @@ from nexus.schemas.core import (
     TaskStatus,
 )
 from nexus.schemas.capability import CapabilityManifest
+from nexus.schemas.routing import CandidateEvaluation, RoutingDecision
 
 __all__ = [
     "Artifact",
+    "CandidateEvaluation",
     "CapabilityManifest",
     "Evidence",
     "Intent",
     "Objective",
     "Plan",
+    "RoutingDecision",
     "Run",
     "RunStatus",
     "Task",

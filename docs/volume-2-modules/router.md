@@ -1,6 +1,7 @@
 # Module Spec — Capability Router
 
-**Status:** Spec (Stage 3). Not yet implemented.
+**Status:** Implemented (Stage 3). Code: `nexus/router/`. Tests:
+`tests/test_router.py`. Decision schema: `nexus/schemas/routing.py`.
 
 ## Purpose
 
@@ -12,32 +13,58 @@ Decides; never executes.
 **Owns:** routing decisions and their recording.
 
 **Must never:** execute tasks, mutate manifests, or contain vendor-specific
-branches. Routing operates on manifest fields only.
+branches. Routing operates on manifest fields only (Invariant I1).
 
 ## Behavior
 
-Inputs to a decision: task capability type, cost, latency, trust, context,
-user preferences, historical performance (from recorded decisions + verified
-outcomes).
+### Policy (`RoutingPolicy`, frozen)
+A declarative rule set with an id: a policy id always names one exact
+behavior — a changed policy is a new policy. Fields: `require_healthy`,
+`min_reliability`, `min_trust`, `max_cost`, `max_latency_ms`,
+`preferred`/`denied` capability names (user preferences), score weights, and
+the preference bonus.
 
-- **V1 is rule-based and deterministic:** an ordered policy list evaluated over
-  manifest fields. Same task + same registry snapshot + same policies → same
-  choice.
-- **Every decision is recorded** as a `RoutingDecision` (task, candidates
-  considered, scores, chosen capability, policy version, timestamp). This
-  record is the raw material for later benchmark-driven and adaptive routing —
-  those upgrades are gated on having real decision history to evaluate.
-- Emits `route.decided` events.
-- If no capability satisfies the task, routing fails explicitly
-  (`route.unroutable`) — the planner re-plans or the user is asked; the router
-  never guesses.
+### Evaluation per task
+1. Candidates: `registry.find(task.capability_type)` in the registry's
+   deterministic order.
+2. **Exclusion** with an explicit recorded reason, checked in order: denied by
+   policy → unhealthy (always excluded) → health unknown when
+   `require_healthy` → below `min_reliability`/`min_trust` → over
+   `max_cost`/`max_latency_ms`. By default UNKNOWN health is admitted —
+   unchecked capabilities are usable until proven unhealthy.
+3. **Scoring** of the remaining candidates (deterministic):
+   `w_reliability·reliability + w_trust·trust − w_cost·(cost/max_cost) −
+   w_latency·(latency/max_latency) + preference_bonus·[name ∈ preferred]`,
+   with cost/latency normalized within the eligible set. Default weights
+   0.4/0.4/0.1/0.1, bonus 0.25.
+4. **Choice:** highest score; ties break by name (ascending) then version
+   (newest). Same registry state + same policy → same choice, always.
 
-## Interfaces
+### Recording (Invariant I6)
+Every `route()` call — routable or not — appends a `RoutingDecision`: task id,
+capability type, policy id, the full per-candidate evaluation (score *or*
+exclusion reason), the chosen capability id, and the reason. The log is
+returned as copies and is complete enough to replay the choice. It lives
+in-memory until Stage 5 persists it; it is the raw material for
+benchmark-driven and adaptive routing, which remain gated on this history.
 
-- Input: `Task` + registry query results + policy set.
-- Output: capability binding on the task + persisted `RoutingDecision`.
+### Unroutable tasks
+The router never guesses. `route()` never raises: an unroutable task yields a
+decision with `chosen=None` and a reason ("no registered capabilities of
+type …" / "all candidates excluded by policy") plus a `route.unroutable`
+event. `route_plan()` binds `task.capability_binding` for every routable task,
+records every decision first, then raises `UnroutableError` naming the
+unroutable tasks — so the planner or user acts on the full decision set.
+
+## Events
+
+`route.decided` (`{decision_id, task_id, capability}`), `route.unroutable`
+(`{decision_id, task_id, reason}`).
 
 ## Verification
 
-Determinism tests; policy-ordering tests; unroutable-task behavior; decision
-records are complete enough to replay the choice.
+19 tests: single-candidate, quality/cost/latency dominance, preference-bonus
+flip, name tie-break, cross-instance determinism, every exclusion rule with
+its recorded reason, unknown-vs-unhealthy defaults, decision completeness,
+unroutable recording + events, copy isolation of the log, plan binding, and
+route-plan explicit failure after recording.

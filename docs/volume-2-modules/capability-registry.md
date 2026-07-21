@@ -44,10 +44,13 @@ same kind of object.
   the router decides whether to use them. `healthy_only=True` filters.
 - `capability.health` is emitted once per transition, not per check.
 
-### Retirement
+### Retirement and reactivation
 - `retire(name, version)` flags the record RETIRED (idempotent; unknown ids
   error), excludes it from default discovery and from latest-version
   resolution, keeps the record queryable, and emits `capability.retired`.
+- Registering a retired `(name, version)` **reactivates** it (fresh record,
+  health reset to UNKNOWN) — used by the plugin lifecycle's disable→enable.
+  Active duplicates are still rejected.
 
 ### Evidence-gated scores (Invariant I2)
 - `record_outcome(name, version, evidence, success)` is the **only** path that

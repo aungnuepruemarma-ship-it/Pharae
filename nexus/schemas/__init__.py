@@ -18,6 +18,7 @@ from nexus.schemas.core import (
 )
 from nexus.schemas.capability import CapabilityManifest
 from nexus.schemas.memory import MemoryItem, MemoryLayer
+from nexus.schemas.plugin import PluginPackage
 from nexus.schemas.routing import CandidateEvaluation, RoutingDecision
 
 __all__ = [
@@ -30,6 +31,7 @@ __all__ = [
     "MemoryLayer",
     "Objective",
     "Plan",
+    "PluginPackage",
     "RoutingDecision",
     "Run",
     "RunStatus",

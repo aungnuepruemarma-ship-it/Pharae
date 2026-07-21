@@ -98,8 +98,11 @@ class CapabilityRegistry:
         if errors:
             raise RegistryError(f"manifest rejected: {'; '.join(errors)}")
         key = (manifest.name, manifest.version)
-        if key in self._records:
+        existing = self._records.get(key)
+        if existing is not None and existing.status is RegistrationStatus.ACTIVE:
             raise RegistryError(f"{manifest.name}@{manifest.version} is already registered")
+        # A retired capability may be re-registered: reactivation (used by the
+        # plugin lifecycle's disable→enable). Health resets to UNKNOWN.
         record = CapabilityRecord(manifest=copy.deepcopy(manifest))
         self._records[key] = record
         if health_probe is not None:

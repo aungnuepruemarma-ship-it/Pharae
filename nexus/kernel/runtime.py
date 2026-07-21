@@ -79,16 +79,29 @@ class Runtime:
 
     # -- handlers ------------------------------------------------------------
 
-    def register_handler(self, capability_type: str, handler: Handler) -> None:
-        if not capability_type.strip():
-            raise RuntimeError_("capability_type must be non-empty")
-        self._handlers[capability_type] = handler
+    def register_handler(self, key: str, handler: Handler) -> None:
+        """Keys are capability type strings ("code") or capability ids
+        ("calc.local@1.0.0") — plugins register under their ids so multiple
+        capabilities of one type coexist."""
+        if not key.strip():
+            raise RuntimeError_("handler key must be non-empty")
+        self._handlers[key] = handler
+
+    def unregister_handler(self, key: str) -> bool:
+        return self._handlers.pop(key, None) is not None
 
     def handler_types(self) -> list[str]:
         return sorted(self._handlers)
 
-    def get_handler(self, capability_type: str) -> Handler | None:
-        return self._handlers.get(capability_type)
+    def get_handler(self, key: str) -> Handler | None:
+        return self._handlers.get(key)
+
+    def resolve_handler(self, task: Task) -> Handler | None:
+        """The router's binding wins; capability type is the fallback — the
+        runtime honors routing decisions exactly."""
+        if task.capability_binding and task.capability_binding in self._handlers:
+            return self._handlers[task.capability_binding]
+        return self._handlers.get(task.capability_type)
 
     # -- execution -----------------------------------------------------------
 
@@ -131,7 +144,7 @@ class Runtime:
             "task.started",
             {"task_id": task.id, "run_id": run.id, "session_id": session.id},
         )
-        handler = self._handlers.get(task.capability_type)
+        handler = self.resolve_handler(task)
         if handler is None:
             scheduler.fail(task.id)
             run.task_results[task.id] = TaskResult(

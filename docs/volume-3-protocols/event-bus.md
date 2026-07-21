@@ -37,6 +37,7 @@ and never the envelope shape.
 | `run.*` | Executor / verification |
 | `capability.*` | Registry |
 | `memory.*` | Memory system |
+| `plugin.*` | Plugin system |
 | `policy.*`, `skill.*` | Cog |
 | `bus.*` | The bus itself |
 

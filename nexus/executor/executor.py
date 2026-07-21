@@ -248,7 +248,7 @@ class Executor:
         pool: cf.ThreadPoolExecutor,
         inflight: dict[cf.Future, tuple[Task, int]],
     ) -> None:
-        handler = self._runtime.get_handler(task.capability_type)
+        handler = self._runtime.resolve_handler(task)
         if attempt == 1:
             scheduler.start(task.id)
             self._bus.publish("task.started", {"task_id": task.id, "run_id": run.id})
@@ -291,7 +291,7 @@ class Executor:
                 "task.retried",
                 {"task_id": task.id, "run_id": run.id, "attempt": attempt + 1},
             )
-            handler = self._runtime.get_handler(task.capability_type)
+            handler = self._runtime.resolve_handler(task)
             retry_future = pool.submit(self._invoke, handler, task, ctx)
             inflight[retry_future] = (task, attempt + 1)
             return

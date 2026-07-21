@@ -65,9 +65,11 @@ prompts. (Invariant I1.) The kernel imports only the Python standard library and
 ### Runtime (`nexus/kernel/runtime.py`)
 
 - Lifecycle: `start()` / `stop()`; emits `runtime.started` / `runtime.stopped`.
-- Handlers register by **capability type string** (`"code"`, `"research"`) —
-  this seam is where the Capability Layer will attach; the kernel neither knows
-  nor cares what a handler does.
+- Handlers register by key — a **capability type string** (`"code"`) or,
+  since Stage 10, a **capability id** (`"calc.local@1.0.0"`, used by
+  plugins). Dispatch resolves the task's router binding first, falling back
+  to its type — the runtime honors routing decisions exactly. The kernel
+  neither knows nor cares what a handler does.
 - `execute(plan)` runs a plan to completion: repeatedly asks the scheduler for
   ready tasks, dispatches to handlers, records results, emits
   `task.started` / `task.completed` / `task.failed` events, and returns a `Run`

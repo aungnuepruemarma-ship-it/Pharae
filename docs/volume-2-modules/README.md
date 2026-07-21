@@ -18,6 +18,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [verification.md](verification.md) | Verification engine | **Implemented (Stage 7)** |
 | [research.md](research.md) | Research capability | **Implemented (Stage 8)** |
 | [browser.md](browser.md) | Browser capability | **Implemented (Stage 9)** |
+| [plugins.md](plugins.md) | Plugin system | **Implemented (Stage 10)** |
 | [cog.md](cog.md) | Cog learning system | Spec (post-V1 core loop) |
 
 Not yet specified (arrive as capabilities/plugins, per Invariant I5):

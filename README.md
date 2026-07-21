@@ -55,6 +55,7 @@ nexus/       The runtime implementation
   verify/    Stage 7: evidence assembly, checks, trace validation, confidence
   research/  Stage 8: research capability — docs, repos, web refs (manifest+handler+check)
   browser/   Stage 9: browser capability — Playwright behind a driver seam, action scripts
+  plugins/   Stage 10: installable plugins — atomic install, permission review, lifecycle
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -135,6 +136,15 @@ failures; scripted-action failures are recorded for verification to judge.
 The browser never stores memory: working memory only, gate for everything
 else. Tested deterministically via a fake driver and live against real
 Chromium.
+
+**Stage 10 — Plugins** is implemented: installable packages contributing
+capabilities through the registry and handlers through the runtime's seam.
+Install is validate-everything-then-register (a rejected plugin leaves no
+trace); permissions are reviewed at install time against a policy allowlist;
+lifecycle covers disable/enable (registry reactivation), side-by-side
+versioned update, and removal that never deletes registry history. Handlers
+register under capability ids, so same-type plugins coexist and the router's
+binding decides which one runs — dispatch honors routing exactly.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

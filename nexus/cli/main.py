@@ -63,6 +63,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("status", help="show live runtime state")
     sub.add_parser("config", help="show effective configuration")
+    sub.add_parser("bench", help="run the benchmark suite and report metrics")
     return p
 
 
@@ -197,6 +198,16 @@ def _cmd_status(ctx: AppContext, args, out: TextIO) -> int:
     return 0
 
 
+def _cmd_bench(ctx: AppContext, args, out: TextIO) -> int:
+    from nexus.bench import run_suite
+
+    report = run_suite(os.path.join(ctx.data_dir, "bench"))
+    _section(out, "BENCH")
+    for key, value in report.deterministic_summary().items():
+        out.write(f"  {key:<16}: {value}\n")
+    return 0
+
+
 def _cmd_config(ctx: AppContext, args, out: TextIO) -> int:
     _section(out, "CONFIG")
     out.write(f"  data dir      : {ctx.data_dir}\n")
@@ -213,6 +224,7 @@ _HANDLERS = {
     "memory": _cmd_memory,
     "status": _cmd_status,
     "config": _cmd_config,
+    "bench": _cmd_bench,
 }
 
 

@@ -25,6 +25,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [experiments.md](experiments.md) | Experiment Manager (L8, statistics) | **Implemented** |
 | [cog.md](cog.md) | Cog learning system | **Implemented** |
 | [science.md](science.md) | Science layers (L9/L10/L12 foundation) | **Implemented** |
+| [bench.md](bench.md) | Benchmark harness | **Implemented** |
 
 Not yet specified (arrive as capabilities/plugins, per Invariant I5):
 cloud, notebook, swarm. They get specs when their stage begins.

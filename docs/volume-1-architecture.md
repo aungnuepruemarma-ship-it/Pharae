@@ -291,9 +291,12 @@ do · think · research · plan · run · verify · memory · learn · browse ·
 
 ## 17. Roadmap
 
-**Phase 1 — Kernel MVP:** runtime kernel ✅ (Stage 0), intent engine ✅
-(Stage 1), capability registry ✅ (Stage 2), router ✅ (Stage 3), planner ✅
-(Stage 4), executor ✅ (Stage 5), SQLite memory ✅ (Stage 6), verification.
+**Phase 1 — Kernel MVP: complete.** Runtime kernel ✅ (Stage 0), intent
+engine ✅ (Stage 1), capability registry ✅ (Stage 2), router ✅ (Stage 3),
+planner ✅ (Stage 4), executor ✅ (Stage 5), SQLite memory ✅ (Stage 6),
+verification ✅ (Stage 7). The Volume 0 §9 success criteria — understand,
+plan, select, execute, verify, learn — run end to end in
+`tests/test_verify.py::TestV1SuccessCriteria`.
 
 **Phase 2 — Knowledge:** research engine, browser capability (one backend,
 Playwright), knowledge graph (if justified), plugin SDK.
@@ -312,7 +315,7 @@ Staged build order within Phase 1 (each stage follows the Volume 5 workflow):
 | 4 | Planner: intent → task DAG, re-planning with provenance ✅ |
 | 5 | Executor: interactive, background, parallel, checkpoint, resume ✅ |
 | 6 | Memory (SQLite): working, project, history, skills ✅ |
-| 7 | Verification: evidence, logs, artifacts, confidence |
+| 7 | Verification: evidence, logs, artifacts, confidence ✅ |
 | 8 | Research capability |
 | 9 | Browser capability (Playwright) |
 | 10 | Plugin system: install, update, manifests, permissions |

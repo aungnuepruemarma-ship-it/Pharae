@@ -52,6 +52,7 @@ nexus/       The runtime implementation
   planner/   Stage 4: intent → task DAG with structural verification, re-planning
   executor/  Stage 5: parallel execution, jobs, retries, checkpoint/resume
   memory/    Stage 6: SQLite layered memory with gated promotion, decision log
+  verify/    Stage 7: evidence assembly, checks, trace validation, confidence
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -102,6 +103,18 @@ only ungated path and everything above enters solely through `promote` —
 verified evidence plus policy id, full provenance, reversible deprecation.
 Secret-like payloads are rejected at every write path. Routing decisions
 persist as an operational replay log, durable across restarts.
+
+**Stage 7 — Verification** is implemented, completing the Phase 1 core loop:
+structural checks, pluggable per-capability-type checks, event-trace
+consistency validation, deterministic confidence scoring with recorded
+inputs, and content-derived evidence ids. `verified` means "trustworthy
+evidence was established" — a verified record of a failure feeds failure
+memory and reliability scoring; unverifiable evidence provably cannot pass
+the gates.
+
+**The V1 success criteria hold:** understand → plan → select → execute →
+verify → learn runs end to end against real subsystems
+(`tests/test_verify.py::TestV1SuccessCriteria`).
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

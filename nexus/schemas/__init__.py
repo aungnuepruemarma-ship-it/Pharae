@@ -17,6 +17,7 @@ from nexus.schemas.core import (
     TaskStatus,
 )
 from nexus.schemas.capability import CapabilityManifest
+from nexus.schemas.memory import MemoryItem, MemoryLayer
 from nexus.schemas.routing import CandidateEvaluation, RoutingDecision
 
 __all__ = [
@@ -25,6 +26,8 @@ __all__ = [
     "CapabilityManifest",
     "Evidence",
     "Intent",
+    "MemoryItem",
+    "MemoryLayer",
     "Objective",
     "Plan",
     "RoutingDecision",

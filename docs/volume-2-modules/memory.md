@@ -1,7 +1,8 @@
 # Module Spec — Memory System
 
-**Status:** Spec (Stage 6). Not yet implemented. Storage decision: ADR-0002
-(SQLite first).
+**Status:** Implemented (Stage 6). Code: `nexus/memory/`. Tests:
+`tests/test_memory.py`. Storage: SQLite per ADR-0002. Protocol:
+Volume 3 `memory-api.md` (normative gate rules).
 
 ## Purpose
 
@@ -11,42 +12,70 @@ Layered storage of knowledge and learned behavior. Memory is never one blob.
 
 | Layer | Contents | Write path |
 |-------|----------|-----------|
-| Working | Current run context | Executor, freely (session-scoped, ephemeral) |
-| Episodic | What happened in past runs | Learning pipeline only |
-| Semantic | Stable facts, concepts, decisions | Learning pipeline only |
-| Procedural | Successful workflows (skills) | Skill promotion only |
-| Failure | What went wrong, why, the fix | Learning pipeline only |
-| Project | Per-project state, goals, history | Policy-gated |
+| Working | Current run context | `write_working` — the only ungated write; session-scoped, cleared with the session |
+| Episodic | What happened in past runs | `promote` only |
+| Semantic | Stable facts, concepts, decisions | `promote` only |
+| Procedural | Successful workflows (skills) | `promote` only |
+| Failure | What went wrong, why, the fix | `promote` only |
+| Project | Per-project state, goals, history | `promote` only |
 
-## Promotion Rules (Invariants I2, I3)
+## Gate Enforcement (Invariants I2, I3)
 
-1. Working memory is free to write and dies with the run (except what
-   verification captures as evidence).
-2. Nothing enters episodic/semantic/procedural/failure memory except through
-   the Cog pipeline, and only backed by **verified** evidence.
-3. Promotions record provenance: which run, which evidence, which policy
-   version approved it.
-4. Every promotion is reversible: deprecation and rollback are first-class.
+- `promote(evidence, layer, content, policy_id)` rejects: unverified or
+  non-`Evidence` evidence, a missing policy id, promotion into the working
+  layer, secret-like content, and non-JSON-serializable content — all before
+  touching storage.
+- **There is deliberately no generic `write(layer, …)` API.** The absence of
+  an ungated write path is part of the contract, and a test asserts the
+  methods do not exist.
+- Every promoted item records full provenance (`run_id`, `evidence_id`,
+  `policy_id`, `promoted_at`), queryable via `provenance(item_id)`.
+- `deprecate(item_id, reason)` is reversible removal: excluded from default
+  reads/searches, retained and queryable with `include_deprecated=True`.
+  Idempotent; unknown ids error.
+- Caller restriction (only Cog may call `promote`) remains organizational
+  until the security layer lands — the evidence/policy gates are code.
 
-## Boundary
+## Secret Rejection
 
-**Owns:** the stores, the Memory API, promotion bookkeeping, search.
+Every write path (working included) walks the payload and rejects:
+credential-like key names (`password`, `api_key`, `token`, …) with non-empty
+values, and value patterns (PEM private-key blocks, AWS access-key ids,
+GitHub tokens, `sk-…` API-key shapes, bearer tokens). Recorded as policy:
+false positives are acceptable; leaked credentials are not.
 
-**Must never:** be written directly by capabilities or models; interpret
-content (it stores; Cog decides).
+## Reads
+
+`read(layer)` in insertion order; `search(text, layer?)` cross-layer LIKE
+match; both exclude deprecated items by default. Layers accept enum or
+string. Contents round-trip through JSON.
+
+## Routing-Decision Record
+
+Routing decisions persist here as an **operational record distinct from the
+memory layers** — they are the router's replay log (Invariant I6), not
+knowledge, so no gate applies. The router's `decision_sink` hook wires to
+`record_routing_decision`; `routing_decisions()` reconstructs full
+`RoutingDecision` objects across restarts.
 
 ## Storage
 
-SQLite, one file per store or one file with per-layer tables (implementation
-choice). A knowledge graph is added only when a recorded limitation justifies
-it — that requires a new ADR superseding ADR-0002.
+Single SQLite database (`:memory:` default, file path for durability),
+thread-safe behind a lock, transactional writes. Items, working memory, and
+routing decisions survive close/reopen. A knowledge graph is added only when
+a recorded limitation justifies it — ADR superseding ADR-0002 required.
 
-## Interfaces
+## Events
 
-Memory API (Volume 3): `read(layer, query)`, `write_working(...)`,
-`promote(evidence_ref, layer, item, policy)`, `search(...)`, `deprecate(...)`.
+`memory.promoted` (`{item_id, layer, policy_id}`),
+`memory.deprecated` (`{item_id, reason}`).
 
 ## Verification
 
-Gate tests: direct writes above working memory are rejected. Provenance tests:
-every promoted item traces to verified evidence. Rollback tests.
+23 tests: working-memory round-trip/isolation/clearing, secret rejection on
+both write paths (key names and value patterns), the full promotion gate
+(verified/unverified, missing policy, working-layer, unserializable),
+absence-of-ungated-writes assertion, provenance completeness, ordered reads,
+cross-layer and filtered search, deprecation semantics and events,
+close/reopen persistence of items, working memory, and routing decisions,
+and router→sink integration.

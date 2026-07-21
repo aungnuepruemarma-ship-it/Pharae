@@ -1,7 +1,7 @@
-# Protocol — Memory API (v1, spec)
+# Protocol — Memory API (v1)
 
-Implemented in Stage 6. The gate rules are normative now: any earlier code that
-touches memory must already conform.
+Implemented (Stage 6): `nexus/memory/`. The gate rules below are normative;
+the implementation enforces them in code.
 
 ## Operations
 

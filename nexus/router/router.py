@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass
+from typing import Callable
 
 from nexus.capabilities.registry import (
     CapabilityRecord,
@@ -61,10 +62,14 @@ class Router:
         registry: CapabilityRegistry,
         bus: EventBus | None = None,
         policy: RoutingPolicy | None = None,
+        decision_sink: Callable[[RoutingDecision], None] | None = None,
     ) -> None:
+        """``decision_sink`` receives a copy of every decision for durable
+        persistence — wire it to ``MemorySystem.record_routing_decision``."""
         self._registry = registry
         self._bus = bus
         self._policy = policy or RoutingPolicy()
+        self._sink = decision_sink
         self._decisions: list[RoutingDecision] = []
         self._counter = 0
 
@@ -106,6 +111,8 @@ class Router:
             reason=reason,
         )
         self._decisions.append(copy.deepcopy(decision))
+        if self._sink is not None:
+            self._sink(copy.deepcopy(decision))
 
         if self._bus is not None:
             if chosen is not None:

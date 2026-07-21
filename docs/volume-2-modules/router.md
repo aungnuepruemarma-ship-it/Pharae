@@ -44,9 +44,10 @@ the preference bonus.
 Every `route()` call — routable or not — appends a `RoutingDecision`: task id,
 capability type, policy id, the full per-candidate evaluation (score *or*
 exclusion reason), the chosen capability id, and the reason. The log is
-returned as copies and is complete enough to replay the choice. It lives
-in-memory until Stage 6 persists it; it is the raw material for
-benchmark-driven and adaptive routing, which remain gated on this history.
+returned as copies and is complete enough to replay the choice. Wiring
+`decision_sink` to `MemorySystem.record_routing_decision` (Stage 6) persists
+every decision durably; the log is the raw material for benchmark-driven and
+adaptive routing, which remain gated on this history.
 
 ### Unroutable tasks
 The router never guesses. `route()` never raises: an unroutable task yields a

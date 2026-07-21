@@ -51,6 +51,7 @@ nexus/       The runtime implementation
   router/    Stage 3: deterministic policy routing with recorded decisions
   planner/   Stage 4: intent → task DAG with structural verification, re-planning
   executor/  Stage 5: parallel execution, jobs, retries, checkpoint/resume
+  memory/    Stage 6: SQLite layered memory with gated promotion, decision log
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -94,6 +95,13 @@ bounded recorded retries, and checkpoint/resume — completed outputs and
 working memory are snapshotted at every task boundary, and resume replays
 them without re-execution. Plans stay immutable; the Run record is the
 account of what happened.
+
+**Stage 6 — Memory** is implemented: SQLite-backed layered stores (working,
+episodic, semantic, procedural, failure, project) where `write_working` is the
+only ungated path and everything above enters solely through `promote` —
+verified evidence plus policy id, full provenance, reversible deprecation.
+Secret-like payloads are rejected at every write path. Routing decisions
+persist as an operational replay log, durable across restarts.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

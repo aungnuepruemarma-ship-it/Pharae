@@ -14,7 +14,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [router.md](router.md) | Capability router | **Implemented (Stage 3)** |
 | [planner.md](planner.md) | Planner | **Implemented (Stage 4)** |
 | [executor.md](executor.md) | Runtime executor | **Implemented (Stage 5)** |
-| [memory.md](memory.md) | Memory system | Spec (Stage 6) |
+| [memory.md](memory.md) | Memory system | **Implemented (Stage 6)** |
 | [verification.md](verification.md) | Verification engine | Spec (Stage 7) |
 | [cog.md](cog.md) | Cog learning system | Spec (post-V1 core loop) |
 

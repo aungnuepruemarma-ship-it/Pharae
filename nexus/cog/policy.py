@@ -16,9 +16,12 @@ import copy
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 from nexus.kernel.events import EventBus
+
+if TYPE_CHECKING:  # avoid a runtime dependency; only duck-typed
+    from nexus.experiments import ExperimentResult
 
 
 class CogError(Exception):
@@ -99,6 +102,22 @@ class PolicyEngine:
         restored.status = PolicyStatus.ACTIVE
         self._record(restored, "policy.rolled_back")
         return copy.deepcopy(restored)
+
+    def activate_if_improved(
+        self, kind: str, version: int, experiment: "ExperimentResult"
+    ) -> bool:
+        """Statistically-gated activation (L8 + L24 governance: 'everything
+        statistically justified'). Activates only if the experiment shows
+        improvement; records the verdict either way. Returns whether it
+        activated. This is the opt-in trial path; ``activate`` remains the
+        immediate path (ADR-0006 records the V1 shortcut)."""
+        if getattr(experiment, "improved", False):
+            self.activate(kind, version)
+            return True
+        policy = self._require(kind, version)
+        policy.reason = f"trial rejected: {getattr(experiment, 'rationale', 'no improvement')}"
+        self._record(policy, "policy.trial_rejected")
+        return False
 
     # -- queries -------------------------------------------------------------
 

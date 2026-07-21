@@ -41,6 +41,7 @@ and never the envelope shape.
 | `memory.*` | Memory system |
 | `plugin.*` | Plugin system |
 | `policy.*`, `skill.*` | Cog |
+| `experiment.*` | Experiment Manager (L8) |
 | `bus.*` | The bus itself |
 
 New namespaces require a spec update here.

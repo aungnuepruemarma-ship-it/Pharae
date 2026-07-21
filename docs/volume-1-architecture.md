@@ -354,6 +354,7 @@ ADRs live in `docs/volume-4-research/adr/`. Key standing decisions:
 - ADR-0003: capability-centered, not agent-centered
 - ADR-0004: reward shaping as an input to trust scoring (gate preserved)
 - ADR-0005: Thinking layer (L4) for Progressive Complexity
+- ADR-0006: statistical gate for policy activation (L8)
 
 ## Appendix C — Data Schemas
 

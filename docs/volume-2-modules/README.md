@@ -21,6 +21,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [research.md](research.md) | Research capability | **Implemented (Stage 8)** |
 | [browser.md](browser.md) | Browser capability | **Implemented (Stage 9)** |
 | [plugins.md](plugins.md) | Plugin system | **Implemented (Stage 10)** |
+| [experiments.md](experiments.md) | Experiment Manager (L8, statistics) | **Implemented** |
 | [cog.md](cog.md) | Cog learning system | **Implemented** |
 
 Not yet specified (arrive as capabilities/plugins, per Invariant I5):

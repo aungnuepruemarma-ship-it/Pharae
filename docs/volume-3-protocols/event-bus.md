@@ -42,6 +42,7 @@ and never the envelope shape.
 | `plugin.*` | Plugin system |
 | `policy.*`, `skill.*` | Cog |
 | `experiment.*` | Experiment Manager (L8) |
+| `theory.*`, `representation.*`, `organization.*` | Science layers (L9/L10/L12) |
 | `bus.*` | The bus itself |
 
 New namespaces require a spec update here.

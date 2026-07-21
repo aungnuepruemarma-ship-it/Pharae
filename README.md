@@ -51,6 +51,7 @@ nexus/       The runtime implementation
   models/    Model capability: adapter seam (scripted/callable/Anthropic/OpenAI)
   economics/ L5: compute-tier selection driven by the thinking budget
   experiments/ L8: A/B statistics (bootstrap, effect size, Holm) — evidence-gated policy trials
+  science/   L9/L10/L12: theory ledger, representation competition, organizations (gated)
   capabilities/  Stage 2: capability registry — manifests, discovery, health, scores
   router/    Stage 3: deterministic policy routing with recorded decisions
   planner/   Stage 4: intent → task DAG with structural verification, re-planning

@@ -22,6 +22,7 @@ from nexus.kernel.events import EventBus
 from nexus.kernel.runtime import RunContext, Runtime
 from nexus.memory import MemorySystem
 from nexus.planner import Planner
+from nexus.pyexec import make_pyexec_handler, pyexec_check, pyexec_manifest
 from nexus.research import DocumentationSource, ResearchEngine, make_research_handler, research_manifest, research_report_check
 from nexus.router import Router
 from nexus.schemas.capability import CapabilityManifest
@@ -79,12 +80,13 @@ class AppContext:
         engine.add_source(DocumentationSource(self.research_root, name="docs.cwd"))
         research_handler = make_research_handler(engine)
         self.verifier.register_check("research", "has-findings", research_report_check)
+        self.verifier.register_check("code", "computed-result", pyexec_check)
 
         specs = [
             (research_manifest(), research_handler),
-            (_builtin("builtin.code", "code", 0.85,
-                      "reference no-op executor: records the task; install a real code capability to execute"),
-             self._note_handler("code")),
+            # A real, failable code capability (arithmetic). Prose-code goals it
+            # cannot compute fail honestly — the builtin does not fake coding.
+            (pyexec_manifest(), make_pyexec_handler()),
             (_builtin("builtin.verify", "verify", 0.9,
                       "reference verifier: marks the run checked"),
              self._verify_handler),
@@ -93,20 +95,6 @@ class AppContext:
             self.registry.register(manifest)
             self.runtime.register_handler(f"{manifest.name}@{manifest.version}", handler)
             self.builtin_names.add(manifest.name)
-
-    @staticmethod
-    def _note_handler(kind: str):
-        def handler(task, ctx: RunContext):
-            note = {
-                "kind": kind,
-                "builtin": True,
-                "description": task.payload.get("description", ""),
-                "constraints": task.payload.get("constraints", []),
-            }
-            ctx.set(f"{kind}:{task.id}", note)
-            return note
-
-        return handler
 
     @staticmethod
     def _verify_handler(task, ctx: RunContext):

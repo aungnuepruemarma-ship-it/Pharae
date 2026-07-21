@@ -64,6 +64,7 @@ nexus/       The runtime implementation
   cog/       Learning engine: reflection, versioned policies, skills, routing revision
   cli/       The `nexus` front door: do / think / plan / memory / status / config / bench
   bench/     Benchmark harness: fixed suite through the real loop, reproducible metrics
+  pyexec/    Real failable code capability: safe arithmetic (no eval/names/calls)
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```

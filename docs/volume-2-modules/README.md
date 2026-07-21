@@ -20,6 +20,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [memory.md](memory.md) | Memory system | **Implemented (Stage 6)** |
 | [verification.md](verification.md) | Verification engine | **Implemented (Stage 7)** |
 | [research.md](research.md) | Research capability | **Implemented (Stage 8)** |
+| [pyexec.md](pyexec.md) | Pyexec (real failable code capability) | **Implemented** |
 | [browser.md](browser.md) | Browser capability | **Implemented (Stage 9)** |
 | [plugins.md](plugins.md) | Plugin system | **Implemented (Stage 10)** |
 | [experiments.md](experiments.md) | Experiment Manager (L8, statistics) | **Implemented** |

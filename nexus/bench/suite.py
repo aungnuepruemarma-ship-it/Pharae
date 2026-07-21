@@ -15,18 +15,23 @@ class BenchCase:
 
 
 def default_suite() -> list[BenchCase]:
+    """Honest mix: computable code tasks that genuinely succeed, a prose-code
+    task the builtin genuinely cannot do (real failure), research, and a
+    deliberately unroutable case. Outcomes really vary, so the confidence
+    metric measures capability quality, not harness determinism."""
     return [
-        BenchCase("b01", "Implement a helper function", "code"),
-        BenchCase("b02", "Fix the typo", "reflex"),
-        BenchCase("b03", "Design the schema and then implement the API", "multi"),
-        BenchCase("b04", "Research how routing scores capabilities", "research"),
-        BenchCase("b05", "Compare SQLite and Postgres for the memory store", "research"),
-        BenchCase("b06", "Add a validation check to the parser", "code"),
-        BenchCase("b07", "Refactor the executor and then add tests", "multi"),
-        BenchCase("b08", "Summarize the router design", "research"),
-        BenchCase("b09", "Rename the variable", "reflex"),
-        BenchCase("b10", "Build a CLI command. Use only the standard library", "code"),
-        # Deliberate failure: no builtin browser capability → honest unroutable.
+        BenchCase("b01", "Compute 6 * 7", "code"),
+        BenchCase("b02", "Evaluate (12 + 8) / 4", "code"),
+        BenchCase("b03", "Calculate 2 ** 10", "code"),
+        BenchCase("b04", "Compute 100 - 37", "code"),
+        BenchCase("b05", "Evaluate 15 % 4 and then compute 3 * 3", "multi"),
+        BenchCase("b06", "Research how routing scores capabilities", "research"),
+        BenchCase("b07", "Summarize the memory promotion gate", "research"),
+        BenchCase("b08", "Investigate the router design", "research"),
+        BenchCase("b09", "Compute (3 + 4) * (5 - 2)", "code"),
+        # Prose-code the arithmetic builtin genuinely cannot do → real failure.
+        BenchCase("b10", "Implement a helper function", "code-fail"),
+        # No builtin browser capability → honest unroutable.
         BenchCase("b11", "Scrape the pricing page", "unroutable"),
-        BenchCase("b12", "Investigate the memory promotion gate", "research"),
+        BenchCase("b12", "Compare SQLite and Postgres for the store", "research"),
     ]

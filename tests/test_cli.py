@@ -57,7 +57,7 @@ class TestPlan(CliTestCase):
 
 class TestDo(CliTestCase):
     def test_do_runs_full_loop_and_learns(self):
-        code, out = self.data("do", "Implement a helper function")
+        code, out = self.data("do", "Compute 6 * 7")
         self.assertEqual(code, 0)
         low = out.lower()
         # the six loop stages should all be visible
@@ -66,7 +66,7 @@ class TestDo(CliTestCase):
         self.assertIn("completed", low)
 
     def test_do_persists_learning_across_invocations(self):
-        self.data("do", "Implement a helper function")
+        self.data("do", "Compute 6 * 7")
         # second run in same data dir: memory db carries prior episodes
         code, out = self.data("status")
         self.assertEqual(code, 0)
@@ -79,15 +79,22 @@ class TestDo(CliTestCase):
         self.assertIn("unroutable", low)
         self.assertNotEqual(code, 0)
 
+    def test_do_fails_honestly_on_non_computable_code(self):
+        # The arithmetic builtin cannot implement prose code — the run does
+        # not complete, and the CLI says so rather than faking success.
+        code, out = self.data("do", "Implement a helper function")
+        self.assertNotEqual(code, 0)
+        self.assertNotIn("run run", out.lower().split("verify")[0])  # reached verify/failed
+
 
 class TestMemory(CliTestCase):
     def test_memory_search_after_do(self):
-        self.data("do", "Implement a helper function")
-        code, out = self.data("memory", "search", "helper")
+        self.data("do", "Compute 6 * 7")
+        code, out = self.data("memory", "search", "code")
         self.assertEqual(code, 0)
 
     def test_memory_list_layer(self):
-        self.data("do", "Implement a helper function")
+        self.data("do", "Compute 6 * 7")
         code, out = self.data("memory", "list", "episodic")
         self.assertEqual(code, 0)
         self.assertIn("episodic", out.lower())

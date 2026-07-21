@@ -23,6 +23,7 @@ import threading
 import time
 from concurrent import futures as cf
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from nexus.kernel.runtime import RunContext, Runtime
 from nexus.kernel.scheduler import Scheduler
@@ -36,6 +37,9 @@ from nexus.schemas.core import (
     TaskStatus,
     TERMINAL_TASK_STATUSES,
 )
+
+if TYPE_CHECKING:  # avoid a runtime import; only duck-typed
+    from nexus.security import SecurityGuard
 
 _POLL_S = 0.05  # responsiveness bound for pause/cancel at task boundaries
 _CHECKPOINT_NS = "checkpoints"
@@ -99,6 +103,7 @@ class Executor:
         max_workers: int = 4,
         retry: RetryPolicy = RetryPolicy(),
         checkpoints: bool = True,
+        security: "SecurityGuard | None" = None,
     ) -> None:
         self._runtime = runtime
         self._bus = runtime.bus
@@ -106,6 +111,7 @@ class Executor:
         self._max_workers = max_workers
         self._retry = retry
         self._checkpoints = checkpoints
+        self._security = security
         self._counter = 0
         self._lock = threading.Lock()
 
@@ -252,6 +258,23 @@ class Executor:
         if attempt == 1:
             scheduler.start(task.id)
             self._bus.publish("task.started", {"task_id": task.id, "run_id": run.id})
+            if self._security is not None:
+                ok, reason = self._security.check(task)
+                if not ok:
+                    scheduler.fail(task.id)
+                    run.task_results[task.id] = TaskResult(
+                        task_id=task.id,
+                        status=TaskStatus.FAILED,
+                        error=f"blocked by security policy: {reason}",
+                        attempts=attempt,
+                    )
+                    self._bus.publish(
+                        "security.blocked",
+                        {"task_id": task.id, "run_id": run.id, "reason": reason},
+                    )
+                    self._bus.publish("task.failed", {"task_id": task.id, "run_id": run.id})
+                    self._save_checkpoint(run, ctx)
+                    return
         if handler is None:  # not retryable: no attempt was ever possible
             scheduler.fail(task.id)
             run.task_results[task.id] = TaskResult(

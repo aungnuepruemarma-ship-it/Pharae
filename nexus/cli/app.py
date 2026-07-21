@@ -26,6 +26,7 @@ from nexus.pyexec import make_pyexec_handler, pyexec_check, pyexec_manifest
 from nexus.research import DocumentationSource, ResearchEngine, make_research_handler, research_manifest, research_report_check
 from nexus.router import Router
 from nexus.schemas.capability import CapabilityManifest
+from nexus.security import SecurityGuard, SecurityPolicy
 from nexus.thinking import ThinkingBudgeter
 from nexus.verify import VerificationEngine
 
@@ -64,7 +65,10 @@ class AppContext:
         self.intent = IntentEngine(bus=self.bus)
         self.thinking = ThinkingBudgeter(bus=self.bus)
         self.planner = Planner(bus=self.bus)
-        self.executor = Executor(self.runtime, retry=RetryPolicy(max_attempts=1))
+        self.security = SecurityGuard(self.registry, SecurityPolicy(), bus=self.bus)
+        self.executor = Executor(
+            self.runtime, retry=RetryPolicy(max_attempts=1), security=self.security
+        )
         self.verifier = VerificationEngine(bus=self.bus)
         self.economist = Economist(bus=self.bus)
         self.cog = Cog(self.memory, registry=self.registry, bus=self.bus)

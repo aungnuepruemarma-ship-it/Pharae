@@ -195,6 +195,9 @@ def _cmd_status(ctx: AppContext, args, out: TextIO) -> int:
         out.write(f"      {layer.value:<11} {len(ctx.memory.read(layer))}\n")
     active = ctx.cog.policies.active("routing")
     out.write(f"  routing policy: {active.id if active else '— (default rules)'}\n")
+    pol = ctx.security._policy  # display-only
+    rules = len(pol.denied_permissions) + len(pol.approval_permissions) + len(pol.approval_types)
+    out.write(f"  security      : {'permissive' if rules == 0 else f'{rules} rule(s)'}\n")
     return 0
 
 

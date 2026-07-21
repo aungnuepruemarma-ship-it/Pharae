@@ -1,6 +1,6 @@
 # Protocol — Plugin API (draft)
 
-Implemented in Stage 9. Draft status: shapes may change until Stage 2 (registry)
+Implemented in Stage 10. Draft status: shapes may change until Stage 2 (registry)
 lands, since plugins are delivered *through* the registry.
 
 ## Model

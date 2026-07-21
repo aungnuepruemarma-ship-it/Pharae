@@ -11,7 +11,7 @@ via ADR.
    (Stage 3 produces the data).
 2. **Memory promotion strategies.** What evidence threshold and repetition
    count should gate working → episodic → semantic/procedural promotion?
-   Needs: promotion pipeline (Stage 5–6) plus regression benchmarks.
+   Needs: promotion pipeline (Stage 6–7) plus regression benchmarks.
 3. **Trust calibration.** How fast should `trust_score` move on success/
    failure, and should decay apply to idle capabilities?
 4. **Human-AI collaboration.** Which task classes should *require* approval

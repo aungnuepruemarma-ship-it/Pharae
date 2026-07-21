@@ -1,7 +1,7 @@
 # Module Spec — Runtime Executor
 
-**Status:** Spec (Stage 4). A minimal synchronous executor exists inside the
-kernel runtime (`nexus/kernel/runtime.py`); Stage 4 grows it into a full
+**Status:** Spec (Stage 5). A minimal synchronous executor exists inside the
+kernel runtime (`nexus/kernel/runtime.py`); Stage 5 grows it into a full
 executor behind the same interface.
 
 ## Purpose

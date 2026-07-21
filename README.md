@@ -49,6 +49,7 @@ nexus/       The runtime implementation
   intent/    Stage 1: deterministic objective → structured intent parsing
   capabilities/  Stage 2: capability registry — manifests, discovery, health, scores
   router/    Stage 3: deterministic policy routing with recorded decisions
+  planner/   Stage 4: intent → task DAG with structural verification, re-planning
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -76,6 +77,14 @@ manifest fields (quality rewarded, normalized cost/latency penalized, explicit
 per-candidate exclusion reasons, preference bonus, name/version tie-breaks).
 Every decision — routable or not — is recorded complete enough to replay;
 unroutable tasks fail explicitly, the router never guesses.
+
+**Stage 4 — Planner** is implemented: deterministic intent → task DAG with
+capability-type assignment (never vendors), sequential goal chaining, an
+optional context-gathering task, and a `verify` task appended to every plan —
+verification is structural. Re-planning produces an immutable successor plan
+with provenance to the failed plan and its evidence. The coordination chain
+now runs end to end: objective → intent → plan → routed bindings → completed
+run.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

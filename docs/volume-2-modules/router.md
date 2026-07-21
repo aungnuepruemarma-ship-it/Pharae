@@ -45,7 +45,7 @@ Every `route()` call — routable or not — appends a `RoutingDecision`: task i
 capability type, policy id, the full per-candidate evaluation (score *or*
 exclusion reason), the chosen capability id, and the reason. The log is
 returned as copies and is complete enough to replay the choice. It lives
-in-memory until Stage 5 persists it; it is the raw material for
+in-memory until Stage 6 persists it; it is the raw material for
 benchmark-driven and adaptive routing, which remain gated on this history.
 
 ### Unroutable tasks

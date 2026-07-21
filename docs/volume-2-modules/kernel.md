@@ -82,6 +82,6 @@ Run: `python3 -m unittest discover -s tests`.
 
 ## Non-Goals
 
-No persistence (memory arrives in Stage 5 behind the Memory API), no async/
-concurrency runtime (Stage 4 executor concern), no capability manifests
+No persistence (memory arrives in Stage 6 behind the Memory API), no async/
+concurrency runtime (Stage 5 executor concern), no capability manifests
 (Stage 2). Adding any of these *inside* the kernel requires an ADR.

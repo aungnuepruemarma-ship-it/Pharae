@@ -292,8 +292,8 @@ do · think · research · plan · run · verify · memory · learn · browse ·
 ## 17. Roadmap
 
 **Phase 1 — Kernel MVP:** runtime kernel ✅ (Stage 0), intent engine ✅
-(Stage 1), capability registry ✅ (Stage 2), router ✅ (Stage 3), planner,
-executor, SQLite memory, verification.
+(Stage 1), capability registry ✅ (Stage 2), router ✅ (Stage 3), planner ✅
+(Stage 4), executor, SQLite memory, verification.
 
 **Phase 2 — Knowledge:** research engine, browser capability (one backend,
 Playwright), knowledge graph (if justified), plugin SDK.
@@ -309,12 +309,13 @@ Staged build order within Phase 1 (each stage follows the Volume 5 workflow):
 | 1 | Intent engine: objective → constraints → plan-ready intent ✅ |
 | 2 | Capability registry + manifest loader + health ✅ |
 | 3 | Router (rule-based, recorded decisions) ✅ |
-| 4 | Executor: interactive, background, parallel, checkpoint, resume |
-| 5 | Memory (SQLite): working, project, history, skills |
-| 6 | Verification: evidence, logs, artifacts, confidence |
-| 7 | Research capability |
-| 8 | Browser capability (Playwright) |
-| 9 | Plugin system: install, update, manifests, permissions |
+| 4 | Planner: intent → task DAG, re-planning with provenance ✅ |
+| 5 | Executor: interactive, background, parallel, checkpoint, resume |
+| 6 | Memory (SQLite): working, project, history, skills |
+| 7 | Verification: evidence, logs, artifacts, confidence |
+| 8 | Research capability |
+| 9 | Browser capability (Playwright) |
+| 10 | Plugin system: install, update, manifests, permissions |
 
 ## 18. Benchmarks
 

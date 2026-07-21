@@ -1,6 +1,6 @@
 # Module Spec — Memory System
 
-**Status:** Spec (Stage 5). Not yet implemented. Storage decision: ADR-0002
+**Status:** Spec (Stage 6). Not yet implemented. Storage decision: ADR-0002
 (SQLite first).
 
 ## Purpose

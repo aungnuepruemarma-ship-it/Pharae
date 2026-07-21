@@ -12,7 +12,7 @@ is normative until it graduates into an ADR and a Volume 1/2/3 change.
   continuous research loop.
 - `experiments/` — created per experiment as they run (hypothesis →
   measurement → analysis → conclusion, notebook-style).
-- `benchmarks/` — created when the benchmark harness lands (Stage 6+): task
+- `benchmarks/` — created when the benchmark harness lands (Stage 7+): task
   success rate, correctness, speed, cost, recovery rate, memory usefulness,
   routing quality, verification quality, human intervention rate.
 

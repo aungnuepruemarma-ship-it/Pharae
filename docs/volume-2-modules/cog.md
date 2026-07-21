@@ -1,6 +1,6 @@
 # Module Spec — Cog Learning System
 
-**Status:** Spec (post-V1 core loop; minimal version lands with Stage 5–6).
+**Status:** Spec (post-V1 core loop; minimal version lands with Stage 6–7).
 
 ## Purpose
 

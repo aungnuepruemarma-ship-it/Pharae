@@ -1,6 +1,6 @@
 # Module Spec — Verification Engine
 
-**Status:** Spec (Stage 6). Not yet implemented. The `Evidence` schema is
+**Status:** Spec (Stage 7). Not yet implemented. The `Evidence` schema is
 canonical in `nexus/schemas/core.py`.
 
 ## Purpose

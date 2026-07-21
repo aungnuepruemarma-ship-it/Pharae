@@ -1,6 +1,6 @@
 # Protocol — Memory API (v1, spec)
 
-Implemented in Stage 5. The gate rules are normative now: any earlier code that
+Implemented in Stage 6. The gate rules are normative now: any earlier code that
 touches memory must already conform.
 
 ## Operations

@@ -149,3 +149,9 @@ and the system can:
 If those six steps work reliably, the core architecture is validated. Everything
 else — dashboards, cloud orchestration, swarms, capability exchange, advanced
 learning — is added incrementally on top of the stable foundation.
+
+**Status:** this criterion is met and runnable. `nexus do "…"` (see the CLI
+spec) drives all six steps end to end against the real subsystems — understand,
+plan, select, execute, verify, learn — with learning persisted across
+invocations. What remains unproven is not the architecture but its behavior
+under sustained real-world use.

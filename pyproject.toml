@@ -17,3 +17,6 @@ browser = ["playwright>=1.40"]
 
 [tool.setuptools.packages.find]
 include = ["nexus*"]
+
+[project.scripts]
+nexus = "nexus.cli.main:_main"

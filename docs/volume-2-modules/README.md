@@ -8,6 +8,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 
 | Spec | Module | Status |
 |------|--------|--------|
+| [cli.md](cli.md) | CLI (front-door interface) | **Implemented** |
 | [kernel.md](kernel.md) | Runtime kernel: events, state, sessions, scheduler, runtime | **Implemented (Stage 0)** |
 | [intent.md](intent.md) | Intent engine | **Implemented (Stage 1)** |
 | [thinking.md](thinking.md) | Thinking (L4 reasoning budget) | **Implemented** |

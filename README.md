@@ -62,6 +62,7 @@ nexus/       The runtime implementation
   browser/   Stage 9: browser capability — Playwright behind a driver seam, action scripts
   plugins/   Stage 10: installable plugins — atomic install, permission review, lifecycle
   cog/       Learning engine: reflection, versioned policies, skills, routing revision
+  cli/       The `nexus` front door: do / think / plan / memory / status / config
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -161,6 +162,30 @@ it — the product loop's last arrow, tested end to end: a trusted-but-broken
 capability fails three runs, Cog learns, and the next routing picks the
 working alternative. All five pillars of the architecture are now
 implemented.
+
+**Beyond the roadmap** — L4 Thinking (reasoning budget), L5 Economics (+ a
+model capability), L8 Experiment Manager (statistics + evidence-gated policy
+trials), and an L9/L10/L12 science foundation (theory ledger, representation
+competition, organizations-as-compositions) are implemented, mapped honestly
+against the 24-layer CogOS v2.0 vision in
+[the layer map](docs/volume-4-research/cogos-v2-layer-map.md).
+
+**The runtime has a front door.** The `nexus` CLI drives the whole loop as a
+command — the Volume 0 §9 success criterion, running:
+
+```sh
+nexus do "Research the router design and then implement a helper"
+nexus think "should we use SQLite or Postgres?"
+nexus plan "design the schema and then implement the API"
+nexus status
+```
+
+`nexus do` runs intent → thinking → plan → route → execute → verify → learn
+against the real subsystems, with learning persisted across invocations in a
+local SQLite store. Built-in `research` is real; `code`/`verify` are labeled
+reference handlers — real code/browser/cloud arrive as installable
+capabilities. What remains unproven is not the architecture but its behavior
+under sustained real-world use.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

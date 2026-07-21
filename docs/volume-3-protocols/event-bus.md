@@ -32,6 +32,7 @@ and never the envelope shape.
 | `session.*` | Session manager |
 | `task.*` | Scheduler / executor |
 | `intent.*` | Intent engine |
+| `thinking.*` | Thinking layer (L4) |
 | `plan.*` | Planner |
 | `route.*` | Router |
 | `run.*` | Executor / verification |

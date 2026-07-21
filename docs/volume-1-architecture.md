@@ -44,6 +44,8 @@ Objective
   ↓
 Intent parsing
   ↓
+Thinking (reasoning budget — L4, Progressive Complexity)
+  ↓
 Planning
   ↓
 Capability routing
@@ -351,6 +353,7 @@ ADRs live in `docs/volume-4-research/adr/`. Key standing decisions:
 - ADR-0002: SQLite-first memory
 - ADR-0003: capability-centered, not agent-centered
 - ADR-0004: reward shaping as an input to trust scoring (gate preserved)
+- ADR-0005: Thinking layer (L4) for Progressive Complexity
 
 ## Appendix C — Data Schemas
 

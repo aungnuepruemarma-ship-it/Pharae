@@ -16,9 +16,13 @@ from __future__ import annotations
 
 import hashlib
 import re
+from typing import TYPE_CHECKING
 
 from nexus.kernel.events import EventBus
 from nexus.schemas.core import Evidence, Intent, Plan, Task, TaskStatus
+
+if TYPE_CHECKING:  # avoid a runtime dependency; planner only duck-types the budget
+    from nexus.thinking import ThinkingBudget
 
 # Ordered: first matching bucket wins. "Test the scraper" is a verify task,
 # so verify outranks browser; browser outranks research.
@@ -61,10 +65,15 @@ class Planner:
 
     # -- planning ------------------------------------------------------------
 
-    def plan(self, intent: Intent) -> Plan:
+    def plan(self, intent: Intent, budget: "ThinkingBudget | None" = None) -> Plan:
         """Build a plan from an intent. Open questions on the intent do not
         block planning of the goals that exist — they remain on the intent
-        for the user; an intent with no goals at all is unplannable."""
+        for the user; an intent with no goals at all is unplannable.
+
+        An optional L4 ``budget`` (nexus.thinking) steers Progressive
+        Complexity — currently whether to gather context. It never removes the
+        structurally-appended verify step (verification is an invariant, not a
+        budget line). Without a budget, behavior is unchanged."""
         if not intent.goals:
             raise PlannerError(
                 f"intent {intent.id!r} has no goals to plan"
@@ -73,8 +82,9 @@ class Planner:
         constraints = list(intent.constraints)
         tasks: list[Task] = []
 
+        want_gather = budget.gather_context if budget is not None else True
         gather_id: str | None = None
-        if intent.context_refs:
+        if intent.context_refs and want_gather:
             gather_id = "gather-context"
             tasks.append(
                 Task(

@@ -47,6 +47,7 @@ docs/        The six specification volumes (see table above)
 nexus/       The runtime implementation
   kernel/    Stage 0: event bus, state, sessions, scheduler, runtime lifecycle
   intent/    Stage 1: deterministic objective → structured intent parsing
+  thinking/  L4: reasoning budget (reflex/deliberative/research) — Progressive Complexity
   capabilities/  Stage 2: capability registry — manifests, discovery, health, scores
   router/    Stage 3: deterministic policy routing with recorded decisions
   planner/   Stage 4: intent → task DAG with structural verification, re-planning

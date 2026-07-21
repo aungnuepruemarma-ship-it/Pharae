@@ -13,6 +13,7 @@ memory only through the gated promotion path it was built to hold
 
 from nexus.cog.cog import Cog, LearnResult, to_routing_policy
 from nexus.cog.policy import CogError, PolicyEngine, PolicyStatus, PolicyVersion
+from nexus.cog.reward import RewardShaper
 
 __all__ = [
     "Cog",
@@ -21,5 +22,6 @@ __all__ = [
     "PolicyEngine",
     "PolicyStatus",
     "PolicyVersion",
+    "RewardShaper",
     "to_routing_policy",
 ]

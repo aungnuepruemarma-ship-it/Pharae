@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 
 from nexus.capabilities.registry import CapabilityRegistry, RegistryError
 from nexus.cog.policy import CogError, PolicyEngine, PolicyVersion
+from nexus.cog.reward import RewardShaper
 from nexus.kernel.events import EventBus
 from nexus.memory import MemoryLayer, MemorySystem
 from nexus.router import RoutingPolicy
@@ -61,6 +62,7 @@ class Cog:
         skill_threshold: int = 3,
         failure_threshold: int = 3,
         promotion_policy_id: str = "cog.promotion@0.1.0",
+        reward_shaper: RewardShaper | None = None,
     ) -> None:
         self._memory = memory
         self._registry = registry
@@ -71,6 +73,7 @@ class Cog:
         self._skill_threshold = skill_threshold
         self._failure_threshold = failure_threshold
         self._policy_id = promotion_policy_id
+        self._reward = reward_shaper or RewardShaper()
 
     # -- the pipeline --------------------------------------------------------
 
@@ -164,9 +167,10 @@ class Cog:
                 continue
             task_success = task_result.status is TaskStatus.COMPLETED
             name, _, version = binding.rpartition("@")
+            reward = self._reward.reward(evidence, task_success)
             try:
                 self._registry.record_outcome(
-                    name, version, evidence=evidence, success=task_success
+                    name, version, evidence=evidence, success=task_success, reward=reward
                 )
                 result.score_updates.append((binding, task_success))
             except RegistryError as exc:

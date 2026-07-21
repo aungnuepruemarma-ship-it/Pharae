@@ -33,6 +33,15 @@ task (error, capability binding, signature) — evidence of failure is as
 valuable as evidence of success. Capability score updates flow to the
 registry per bound task outcome; unknown bindings are noted, never fatal.
 
+**Reward shaping (ADR-0004).** The trust update sent to the registry is
+shaped by a `RewardShaper`: a pure, deterministic
+`(verified evidence, success) → reward ∈ [0,1]` that blends confidence and
+outcome, then discounts by a cost/friction signal (explicit cost, else the
+executor's retry fraction). Borrowed in spirit from Prue/NCP's reward engine
+but placed *after* the hard gate — reward affects only the magnitude of a
+permitted trust update, never whether learning happens (Invariant I2 intact).
+Reliability stays the pure success rate.
+
 ### Policy Engine
 Versioned, immutable policy records per kind: **propose → activate →
 deprecate → rollback**, every transition evented (`policy.*`) and journaled

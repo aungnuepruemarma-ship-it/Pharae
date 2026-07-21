@@ -115,6 +115,47 @@ class TestScoreUpdates(CogTestCase):
             self.registry.get("shaky.local").manifest.reliability, before_shaky
         )
 
+    def test_reward_shaping_makes_cheaper_success_build_more_trust(self):
+        # Two capabilities, identical starting trust. Same verified success,
+        # but one run needed a retry — reward shaping should reward the clean
+        # one more. Cog passes a reward derived from the run's own evidence,
+        # so we drive two runs with different retry cost.
+        from nexus.executor import RetryPolicy
+
+        self.registry.register(manifest("clean.local", trust=0.2))
+        self.registry.register(manifest("retry.local", trust=0.2))
+
+        # clean capability: succeeds first try
+        clean_run, clean_plan, clean_ev = self.run_and_verify(
+            [self.ok_task("a", ctype="code", binding="clean.local@1.0.0")],
+            plan_id="p-clean",
+        )
+        self.cog.learn(clean_run, clean_ev, plan=clean_plan)
+
+        # retry capability: fails once then succeeds (needs its own runtime path)
+        calls = {"n": 0}
+
+        def flaky(task, ctx):
+            calls["n"] += 1
+            if calls["n"] < 2:
+                raise ConnectionError("transient")
+            return {"done": task.id}
+
+        self.rt.register_handler("flaky", flaky)
+        from nexus.schemas.core import Plan as _Plan
+
+        plan = _Plan(
+            id="p-retry",
+            tasks=[Task(id="a", capability_type="flaky", capability_binding="retry.local@1.0.0")],
+        )
+        run = Executor(self.rt, retry=RetryPolicy(max_attempts=2)).execute(plan)
+        evidence = self.verifier.verify(run, plan=plan)
+        self.cog.learn(run, evidence, plan=plan)
+
+        clean_trust = self.registry.get("clean.local").manifest.trust_score
+        retry_trust = self.registry.get("retry.local").manifest.trust_score
+        self.assertGreater(clean_trust, retry_trust)  # friction cost trust
+
     def test_unknown_binding_is_noted_not_fatal(self):
         run, plan, evidence = self.run_and_verify(
             [self.ok_task("a", binding="ghost.local@9.9.9")]

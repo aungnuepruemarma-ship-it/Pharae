@@ -192,9 +192,23 @@ class CapabilityRegistry:
     # -- evidence-gated scores (Invariant I2) --------------------------------
 
     def record_outcome(
-        self, name: str, version: str, *, evidence: Evidence, success: bool
+        self,
+        name: str,
+        version: str,
+        *,
+        evidence: Evidence,
+        success: bool,
+        reward: float | None = None,
     ) -> None:
-        """The only path that moves reliability/trust after registration."""
+        """The only path that moves reliability/trust after registration.
+
+        The evidence gate is unconditional (Invariant I2). ``reward`` is an
+        optional reward-shaped trust target in [0, 1] (see ``nexus.cog.
+        RewardShaper``), computed by the learning pipeline from this *same
+        verified evidence* — it shapes only the magnitude of the trust update,
+        never the gate. When omitted, trust falls back to the confidence
+        target, preserving prior behavior. Reliability is always the pure
+        success rate."""
         if not isinstance(evidence, Evidence) or not evidence.verified:
             raise RegistryError(
                 "score updates require verified Evidence (Kernel Invariant I2)"
@@ -202,7 +216,10 @@ class CapabilityRegistry:
         record = self._require(name, version)
         m = record.manifest
         reliability_target = 1.0 if success else 0.0
-        trust_target = evidence.confidence if success else 0.0
+        if success:
+            trust_target = _clamp(reward) if reward is not None else evidence.confidence
+        else:
+            trust_target = 0.0
         m.reliability = _clamp(
             m.reliability + _RELIABILITY_ALPHA * (reliability_target - m.reliability)
         )

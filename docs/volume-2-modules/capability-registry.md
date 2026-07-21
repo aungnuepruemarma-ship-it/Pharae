@@ -58,9 +58,14 @@ same kind of object.
   unverified `Evidence`. There is no public setter.
 - Update rule (deterministic EMA, clamped to [0,1]):
   `reliability += 0.2 · (target − reliability)` with target 1 on success, 0 on
-  failure; `trust += 0.1 · (target − trust)` with target = evidence confidence
-  on success, 0 on failure — trust moves slower and is confidence-weighted.
-  Emits `capability.scored` with the new values and evidence id.
+  failure; `trust += 0.1 · (target − trust)`, trust moving slower. The trust
+  target on success is an optional **reward** in [0,1]
+  (`record_outcome(..., reward=…)`, ADR-0004) supplied by the learning
+  pipeline from the *same verified evidence* — cost/friction-aware, so cheaper
+  cleaner successes build trust faster. With `reward` omitted the target falls
+  back to evidence confidence (prior behavior). The gate runs *before* reward
+  is consulted, so shaping never admits unverified evidence. Emits
+  `capability.scored`.
 - The credential model (restricting *callers* of `record_outcome` to Cog) is
   enforced organizationally until the security layer lands; the evidence gate
   is enforced in code now.

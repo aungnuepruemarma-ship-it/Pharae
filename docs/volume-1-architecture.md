@@ -350,6 +350,7 @@ ADRs live in `docs/volume-4-research/adr/`. Key standing decisions:
 - ADR-0001: plugin-first, minimal kernel
 - ADR-0002: SQLite-first memory
 - ADR-0003: capability-centered, not agent-centered
+- ADR-0004: reward shaping as an input to trust scoring (gate preserved)
 
 ## Appendix C — Data Schemas
 

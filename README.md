@@ -54,6 +54,7 @@ nexus/       The runtime implementation
   memory/    Stage 6: SQLite layered memory with gated promotion, decision log
   verify/    Stage 7: evidence assembly, checks, trace validation, confidence
   research/  Stage 8: research capability — docs, repos, web refs (manifest+handler+check)
+  browser/   Stage 9: browser capability — Playwright behind a driver seam, action scripts
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -124,6 +125,16 @@ engine — zero kernel changes. Pluggable sources (documentation trees,
 repositories with git history, given web refs with an injectable fetcher)
 feed deterministic term-frequency ranking; findings reach long-term memory
 only through the verified-evidence promotion gate.
+
+**Stage 9 — Browser** is implemented: automation as another capability, with
+all backend logic behind a `BrowserDriver` seam (Playwright/Chromium is the
+one V1 backend, an optional dependency with a launch-fallback chain). Browser
+work is declarative action-script data — goto/click/fill/read — so plans stay
+serializable and replayable. Ref-navigation failures are retryable task
+failures; scripted-action failures are recorded for verification to judge.
+The browser never stores memory: working memory only, gate for everything
+else. Tested deterministically via a fake driver and live against real
+Chromium.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

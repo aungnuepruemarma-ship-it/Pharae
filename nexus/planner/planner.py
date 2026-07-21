@@ -81,7 +81,7 @@ class Planner:
                     id=gather_id,
                     capability_type="research",
                     payload={
-                        "description": "Gather context from referenced sources",
+                        "description": f"Gather context for: {'; '.join(intent.goals)}",
                         "context_refs": list(intent.context_refs),
                         "constraints": constraints,
                     },
@@ -96,7 +96,11 @@ class Planner:
                 Task(
                     id=task_id,
                     capability_type=_classify(goal),
-                    payload={"description": goal, "constraints": constraints},
+                    payload={
+                        "description": goal,
+                        "constraints": constraints,
+                        "context_refs": list(intent.context_refs),
+                    },
                     depends_on=[previous] if previous else [],
                 )
             )

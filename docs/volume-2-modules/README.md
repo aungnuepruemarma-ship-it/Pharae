@@ -17,7 +17,8 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [memory.md](memory.md) | Memory system | **Implemented (Stage 6)** |
 | [verification.md](verification.md) | Verification engine | **Implemented (Stage 7)** |
 | [research.md](research.md) | Research capability | **Implemented (Stage 8)** |
+| [browser.md](browser.md) | Browser capability | **Implemented (Stage 9)** |
 | [cog.md](cog.md) | Cog learning system | Spec (post-V1 core loop) |
 
 Not yet specified (arrive as capabilities/plugins, per Invariant I5):
-browser, cloud, notebook, swarm. They get specs when their stage begins.
+cloud, notebook, swarm. They get specs when their stage begins.

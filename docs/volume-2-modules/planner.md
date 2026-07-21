@@ -37,7 +37,10 @@ running plan in place.
   carrying the intent's desired outcomes: verification is structural, not
   optional (Volume 1 §13).
 - Constraints attach to every task payload; goal payloads carry their goal
-  text as `description`.
+  text as `description` **and the intent's `context_refs`** (a browser or
+  research goal must know its refs, not only the gather task). The gather
+  task's query names the actual goals ("Gather context for: …") so research
+  scoring has real terms to work with.
 
 ### Capability typing
 Ordered keyword table over the goal text; first bucket wins; unmatched goals

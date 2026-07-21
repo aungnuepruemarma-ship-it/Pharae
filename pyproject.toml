@@ -11,5 +11,9 @@ requires-python = ">=3.11"
 # Capabilities and plugins declare their own dependencies.
 dependencies = []
 
+[project.optional-dependencies]
+# The browser capability's one V1 backend (docs/volume-2-modules/browser.md).
+browser = ["playwright>=1.40"]
+
 [tool.setuptools.packages.find]
 include = ["nexus*"]

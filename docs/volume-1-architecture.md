@@ -300,8 +300,9 @@ plan, select, execute, verify, learn — run end to end in
 
 **Phase 2 — Knowledge:** research capability ✅ (Stage 8 — the reference
 pattern for capabilities: manifest + handler + check, zero kernel changes),
-browser capability (one backend, Playwright), knowledge graph (if
-justified), plugin SDK.
+browser capability ✅ (Stage 9 — Playwright behind the backend-agnostic
+driver seam, optional dependency), knowledge graph (if justified), plugin
+SDK.
 
 **Phase 3 — Distributed Intelligence:** swarms, cloud scheduler, capability
 exchange, continuous learning.
@@ -319,7 +320,7 @@ Staged build order within Phase 1 (each stage follows the Volume 5 workflow):
 | 6 | Memory (SQLite): working, project, history, skills ✅ |
 | 7 | Verification: evidence, logs, artifacts, confidence ✅ |
 | 8 | Research capability ✅ |
-| 9 | Browser capability (Playwright) |
+| 9 | Browser capability (Playwright) ✅ |
 | 10 | Plugin system: install, update, manifests, permissions |
 
 ## 18. Benchmarks

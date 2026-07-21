@@ -53,6 +53,7 @@ nexus/       The runtime implementation
   executor/  Stage 5: parallel execution, jobs, retries, checkpoint/resume
   memory/    Stage 6: SQLite layered memory with gated promotion, decision log
   verify/    Stage 7: evidence assembly, checks, trace validation, confidence
+  research/  Stage 8: research capability — docs, repos, web refs (manifest+handler+check)
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```
@@ -115,6 +116,14 @@ the gates.
 **The V1 success criteria hold:** understand → plan → select → execute →
 verify → learn runs end to end against real subsystems
 (`tests/test_verify.py::TestV1SuccessCriteria`).
+
+**Stage 8 — Research** is implemented as the first Phase 2 capability, and
+the reference pattern for all that follow: a manifest for the registry, a
+handler for the runtime's capability-type seam, a check for the verification
+engine — zero kernel changes. Pluggable sources (documentation trees,
+repositories with git history, given web refs with an injectable fetcher)
+feed deterministic term-frequency ranking; findings reach long-term memory
+only through the verified-evidence promotion gate.
 
 The staged roadmap (Intent Engine → Capability Registry → Router → Runtime →
 Memory → Verification → Research → Browser → Plugins) is defined in

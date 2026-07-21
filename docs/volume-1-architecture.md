@@ -298,8 +298,10 @@ verification ✅ (Stage 7). The Volume 0 §9 success criteria — understand,
 plan, select, execute, verify, learn — run end to end in
 `tests/test_verify.py::TestV1SuccessCriteria`.
 
-**Phase 2 — Knowledge:** research engine, browser capability (one backend,
-Playwright), knowledge graph (if justified), plugin SDK.
+**Phase 2 — Knowledge:** research capability ✅ (Stage 8 — the reference
+pattern for capabilities: manifest + handler + check, zero kernel changes),
+browser capability (one backend, Playwright), knowledge graph (if
+justified), plugin SDK.
 
 **Phase 3 — Distributed Intelligence:** swarms, cloud scheduler, capability
 exchange, continuous learning.
@@ -316,7 +318,7 @@ Staged build order within Phase 1 (each stage follows the Volume 5 workflow):
 | 5 | Executor: interactive, background, parallel, checkpoint, resume ✅ |
 | 6 | Memory (SQLite): working, project, history, skills ✅ |
 | 7 | Verification: evidence, logs, artifacts, confidence ✅ |
-| 8 | Research capability |
+| 8 | Research capability ✅ |
 | 9 | Browser capability (Playwright) |
 | 10 | Plugin system: install, update, manifests, permissions |
 

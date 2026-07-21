@@ -66,6 +66,7 @@ nexus/       The runtime implementation
   bench/     Benchmark harness: fixed suite through the real loop, reproducible metrics
   pyexec/    Real failable code capability: safe arithmetic (no eval/names/calls)
   security/  Policy-enforced dispatch gate: allow / require-approval / deny
+  sandbox/   Process sandbox: CPU/memory/wall/crash isolation for untrusted handlers (POSIX)
   schemas/   Canonical data objects: Objective, Intent, Task, Plan, Capability, Evidence, Run
 tests/       Unit tests (stdlib unittest; no dependencies)
 ```

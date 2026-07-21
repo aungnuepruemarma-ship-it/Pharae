@@ -43,6 +43,15 @@ Harder: nothing yet — the default is permissive. Reopen trigger: the first
 untrusted/third-party capability that actually needs process isolation, which
 motivates the sandbox beneath this gate.
 
+## Update (2026-07-21) — resource sandbox landed
+
+The deferred "full sandbox now" alternative is partly resolved: `nexus/sandbox/`
+adds a POSIX resource-and-crash sandbox (`run_sandboxed`) beneath this gate —
+CPU/memory/wall/crash confinement, opt-in per capability
+(`make_pyexec_handler(sandbox=True)`). Still deferred: filesystem/network
+isolation (namespaces/containers), which layers under the same interface. The
+promotion-caller restriction remains deferred as recorded.
+
 ## Invariant Check
 
 - **I1:** the guard lives in the executor and reasons over manifest fields;

@@ -24,6 +24,7 @@ interfaces (referencing Volume 3), behavior, and its verification strategy.
 | [browser.md](browser.md) | Browser capability | **Implemented (Stage 9)** |
 | [plugins.md](plugins.md) | Plugin system | **Implemented (Stage 10)** |
 | [security.md](security.md) | Security layer (dispatch gate) | **Implemented** |
+| [sandbox.md](sandbox.md) | Process sandbox (resource isolation) | **Implemented (POSIX)** |
 | [experiments.md](experiments.md) | Experiment Manager (L8, statistics) | **Implemented** |
 | [cog.md](cog.md) | Cog learning system | **Implemented** |
 | [science.md](science.md) | Science layers (L9/L10/L12 foundation) | **Implemented** |

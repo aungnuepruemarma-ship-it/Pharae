@@ -100,7 +100,14 @@ def pyexec_manifest() -> CapabilityManifest:
     )
 
 
-def make_pyexec_handler() -> Callable[[Task, RunContext], dict[str, Any]]:
+def make_pyexec_handler(
+    sandbox: bool = False,
+) -> Callable[[Task, RunContext], dict[str, Any]]:
+    """When ``sandbox=True``, the evaluation runs in a resource-limited child
+    process (defense in depth; `safe_eval` is already safe, but the sandbox
+    also caps CPU/memory/time). Falls back to in-process where fork is
+    unavailable."""
+
     def handler(task: Task, ctx: RunContext) -> dict[str, Any]:
         expression = task.payload.get("expression") or _extract(
             task.payload.get("description", "")
@@ -109,11 +116,25 @@ def make_pyexec_handler() -> Callable[[Task, RunContext], dict[str, Any]]:
             raise PyexecError(
                 f"no computable expression in {task.payload.get('description', '')!r}"
             )
-        result = {"result": safe_eval(expression), "expression": expression}
+        value = _evaluate_sandboxed(expression) if sandbox else safe_eval(expression)
+        result = {"result": value, "expression": expression}
         ctx.set(f"pyexec:{task.id}", result)
         return result
 
     return handler
+
+
+def _evaluate_sandboxed(expression: str) -> float | int:
+    from nexus.sandbox import SandboxLimits, run_sandboxed
+
+    r = run_sandboxed(
+        safe_eval, (expression,), limits=SandboxLimits(cpu_seconds=2, memory_mb=256, wall_seconds=3)
+    )
+    if r.reason == "unsupported":
+        return safe_eval(expression)  # no fork here; the AST whitelist still applies
+    if not r.ok:
+        raise PyexecError(f"sandboxed evaluation failed ({r.reason}): {r.error}")
+    return r.value
 
 
 def pyexec_check(result: TaskResult, task: Task) -> tuple[bool, str]:

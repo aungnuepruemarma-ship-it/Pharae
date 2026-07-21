@@ -38,10 +38,13 @@ never:** execute, mutate capabilities, or weaken another gate.
 
 ## Recorded limits (honest)
 
-- **No process sandboxing.** Handlers run in-process; the guard enforces
-  *whether* a task dispatches, not what a running handler may then do. True
-  isolation (subprocess/container, syscall limits) is future work — the
-  permission model above the gate is declarative, not confined.
+- **Resource sandboxing exists; I/O isolation does not.** The process sandbox
+  (`nexus/sandbox/`, opt-in) now confines a running handler's CPU, memory,
+  wall-time, and crashes beneath this gate — so a misbehaving capability can't
+  down the runtime. It is **not** yet a filesystem/network jail; true I/O
+  isolation (namespaces/containers/seccomp) layers under `run_sandboxed`
+  later. So: the guard decides *whether* a task runs, the sandbox bounds *how
+  much* it consumes, and *what it can reach* (files/net) remains unconfined.
 - **Promotion-caller restriction stays organizational.** The guard governs
   task dispatch, not who may call `memory.promote` / `registry.record_outcome`;
   those remain evidence-gated (I2) but not caller-restricted in code. A

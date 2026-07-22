@@ -71,6 +71,35 @@ modules reject unverified evidence), the absence of any ungated memory write
 (I7). A failure there is a constitutional violation, not an ordinary bug — the
 fix is to restore the invariant, never to weaken the test.
 
+## Architectural Quality Gates (AQ1–AQ7)
+
+A **second category, distinct from the Kernel Invariants.** Invariants protect
+the system's *identity* (breaking one changes what Pharae is); quality gates
+protect the *implementation's health* as it grows (breaking one is a
+maintainability regression, not a constitutional breach). Enforced by
+`tests/test_quality_gates.py`:
+
+| Gate | Guarantee | Status |
+|------|-----------|--------|
+| AQ1 | Every runtime subpackage declares ownership/interfaces/invariants via a module spec with Boundary + Verification sections | enforced |
+| AQ2 | No cyclic dependencies among subpackages (load-time import graph is acyclic; lazy and `TYPE_CHECKING` imports excluded) | enforced |
+| AQ3 | Every capability manifest validates against the schema | enforced |
+| AQ4 | Memory schema init is idempotent; reopen preserves data deterministically | enforced (current form) |
+| AQ5 | Core capability types the planner emits have benchmark coverage | enforced (core types) |
+| AQ6 | Every run emits a complete, ordered, replayable event trace | enforced |
+| AQ7 | Every persistent write carries full provenance (run, evidence, policy, time) | enforced |
+
+**Honest gaps, recorded not faked:** AQ4 is the idempotent-schema form — full
+*migration* determinism lands with a migration system. AQ5 covers the core
+types (code, research, unroutable); dedicated `model`/`verify` benchmark cases
+are future work. When those substrates exist, tighten the gate; until then the
+test asserts only what is actually true.
+
+Adding a subpackage without a spec, introducing an import cycle, or a
+persistent write without provenance now **fails the build** — the
+implementation stays healthy by construction, the same way the invariants keep
+the architecture honest.
+
 ## Contribution Rule of One Question
 
 Every PR description answers: **which Kernel Invariants does this touch, and

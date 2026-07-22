@@ -12,6 +12,15 @@ with **no browser-specific logic in the runtime** (Volume 1 §29, Invariant
 I5). Ships as the standard capability pattern: manifest + handler + check on
 existing seams, zero kernel changes.
 
+## Boundary
+
+**Owns:** the driver seam, session/action-script execution, and the browser
+capability packaging (manifest/handler/check).
+
+**Must never:** put browser-specific logic in the runtime (it lives behind the
+driver), store memory (the handler writes working memory only), or leak a
+backend beyond its driver.
+
 ## The Driver Seam
 
 All backend-specific logic lives behind `BrowserDriver`: `name`, `goto`,

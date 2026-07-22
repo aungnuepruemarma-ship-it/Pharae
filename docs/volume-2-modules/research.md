@@ -10,6 +10,15 @@ A unified research interface that gathers information from different sources
 **without changing the kernel** (Invariant I5). Finds, scores, and structures
 external knowledge into a deterministic report.
 
+## Boundary
+
+**Owns:** source aggregation, relevance ranking, report assembly, and the
+research capability packaging (manifest/handler/check).
+
+**Must never:** change the kernel, write long-term memory (the handler writes
+working memory only; findings reach durable memory through the verified-
+evidence gate), or let a broken source raise (it yields no findings).
+
 ## The Capability Pattern (normative for future capabilities)
 
 Research ships as three attachments to existing seams, zero kernel changes:

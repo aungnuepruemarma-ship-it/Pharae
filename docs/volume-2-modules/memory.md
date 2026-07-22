@@ -19,6 +19,15 @@ Layered storage of knowledge and learned behavior. Memory is never one blob.
 | Failure | What went wrong, why, the fix | `promote` only |
 | Project | Per-project state, goals, history | `promote` only |
 
+## Boundary
+
+**Owns:** the layered stores, the gated write/read/promote/deprecate API,
+provenance, secret rejection, and the operational replay logs.
+
+**Must never:** be written above the working layer except through `promote`
+(no generic ungated write exists), learn or interpret content (it stores;
+Cog decides), or admit unverified evidence into a promotion.
+
 ## Gate Enforcement (Invariants I2, I3)
 
 - `promote(evidence, layer, content, policy_id)` rejects: unverified or

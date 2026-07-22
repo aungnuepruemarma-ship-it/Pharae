@@ -60,7 +60,19 @@ Every feature, no exceptions:
 - Release notes must list any protocol version bumps and link the ADRs behind
   behavior changes.
 
+## Executable Invariants
+
+The Kernel Invariants (Volume 0 §5) are not only prose — `tests/test_invariants.py`
+asserts them as continuously-checked guarantees: kernel/schemas import purity
+(I1, by AST scan — no vendor, no higher-layer import), evidence-gating across
+*every* learning path (I2 — memory, registry, cog, and all three science
+modules reject unverified evidence), the absence of any ungated memory write
+(I3), a sequenced event log (I6), and human-override release of gated work
+(I7). A failure there is a constitutional violation, not an ordinary bug — the
+fix is to restore the invariant, never to weaken the test.
+
 ## Contribution Rule of One Question
 
 Every PR description answers: **which Kernel Invariants does this touch, and
 how are they preserved?** A PR that can't answer cleanly needs an ADR first.
+When in doubt, `tests/test_invariants.py` is the machine-checkable answer.
